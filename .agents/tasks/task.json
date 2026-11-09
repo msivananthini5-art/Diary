@@ -1,0 +1,7 @@
+{
+  "task_id": "task-mobile-first-diary",
+  "task_description": "Transform the SABI diary into a mobile-first responsive experience with single-paper view on mobile (≤768px) and preserved two-page spread on desktop (>768px), including touch-friendly interactions, swipe navigation, and mobile-optimized login",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}

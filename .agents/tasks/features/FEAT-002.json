@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Implement mobile single-paper rendering and swipe navigation in diary.html JavaScript. This feature adds the core mobile interaction: showing one paper at a time and swiping left/right to navigate, while desktop continues using the existing two-page spread navigation. Depends on FEAT-001 CSS foundation being in place.",
+  "status": "completed",
+  "steps": [
+    "1. Add a helper function isMobile() around line 1095 (near the DIARY_MODE and isAnimating declarations) that returns window.innerWidth <= 768. This will be used throughout to branch mobile vs desktop behavior.",
+    "2. Add mobile-specific state variables: mobileCurrentPaperIndex (integer, starts at 0), and a helper to map paper index to spread+side. Each spread has 2 papers: spread[i].leftMemories = paper 2i, spread[i].rightMemories = paper 2i+1. Total papers = DiaryState.spreads.length * 2.",
+    "3. Create a new function renderSinglePaper(paperIndex) that: (a) calculates which spread and which side (left or right) the paperIndex maps to; (b) gets that spread's memories for that side; (c) renders only ONE .page-left element with those memories (always render as page-left for consistency, even if the data is from rightMemories); (d) updates the page counter to show paperIndex+1 / totalPapers; (e) updates mobileCurrentPaperIndex.",
+    "4. Modify the existing renderSpread() function (starts at line ~1337) to branch: if (isMobile()) { renderSinglePaper(mobileCurrentPaperIndex); return; } else { /* existing desktop two-page rendering */ }.",
+    "5. Add swipe detection: (a) at the end of the <script> section, add touchstart and touchend event listeners to the .book element; (b) on touchstart, record e.touches[0].clientX as swipeStartX and set a flag isUserSwiping=true; (c) on touchend, calculate deltaX = e.changedTouches[0].clientX - swipeStartX; (d) if deltaX < -40 (swipe left), call goToNextPaper(); if deltaX > 40 (swipe right), call goToPrevPaper(); (e) set isUserSwiping=false.",
+    "6. Implement goToNextPaper() and goToPrevPaper() functions that: (a) check if mobile; if not, do nothing (desktop uses existing navigation); (b) increment or decrement mobileCurrentPaperIndex (bounded by 0 and totalPapers-1); (c) call renderSinglePaper(mobileCurrentPaperIndex) to update the view; (d) optionally add a single-paper page-turn animation (see step 7).",
+    "7. Add a mobile-specific page-turn animation: create a CSS class .mobile-page-turn that applies a subtle transform/fade animation to .page-left when changing papers on mobile. Apply this class before calling renderSinglePaper, then remove it after 400ms. The animation should NOT flip the entire book or rotate the scene — only the paper itself should animate (e.g., a quick fade or slide).",
+    "8. Guard swipe detection to prevent firing while user is dragging a memory/photo/sticker: in the existing attachDragHandlers() function (around line 2147), when pointerdown fires on a .memory-item, .memory-photo-wrapper, or .memory-sticker, set a global flag isDraggingContent=true; on pointerup, set it to false. In the swipe touchend handler, check if (isDraggingContent) return early without triggering page navigation.",
+    "9. Update window resize handling: add a window.addEventListener('resize', () => { if (isMobile() !== wasMobile) { wasMobile = isMobile(); renderSpread(); } }) to switch rendering modes when viewport crosses the 768px threshold. Initialize wasMobile on page load.",
+    "10. Ensure the existing desktop navigation (handleLeftPageTurn, handleRightPageTurn at lines ~1285, ~1299) remain unchanged and only fire on desktop."
+  ],
+  "acceptance_criteria": [
+    "On mobile (≤768px), only one paper is rendered and visible at a time",
+    "Swiping left on mobile advances to the next paper (if available), swiping right goes to the previous paper",
+    "The mobile paper counter shows 'N / Total' where N is the current paper number (1-indexed) and Total is DiaryState.spreads.length * 2",
+    "Swipe navigation does not fire while the user is dragging a photo, sticker, or text element",
+    "On desktop (>768px), the existing two-page spread and click-based page-turn navigation work exactly as before",
+    "Resizing the browser window from desktop to mobile (or vice versa) switches rendering modes without losing the current position"
+  ],
+  "verification": [
+    "Open diary.html on a mobile device or browser at ≤768px width. Confirm only one paper is visible at a time.",
+    "Swipe left: confirm the next paper appears. Swipe right: confirm the previous paper appears.",
+    "Try dragging a photo or sticker, then immediately swiping: confirm the swipe does not trigger page navigation while dragging.",
+    "Open diary.html on desktop (>768px): confirm the two-page spread shows and existing left/right page click navigation works.",
+    "Resize browser from desktop to mobile and back: confirm the rendering mode switches correctly and the current position is preserved."
+  ],
+  "blocked_reason": null,
+  "findings": "Successfully implemented all mobile single-paper rendering and swipe navigation features:\n\n1. Added isMobile() helper function that checks window.innerWidth <= 768\n2. Added mobile state variables: mobileCurrentPaperIndex, isDraggingContent, isUserSwiping, swipeStartX, wasMobile\n3. Created renderSinglePaper(paperIndex) function that maps paper index to spread/side and renders one paper at a time\n4. Modified renderSpread() to branch: mobile calls renderSinglePaper(), desktop uses existing two-page rendering\n5. Implemented touchstart/touchend event listeners on .book element for swipe detection\n6. Created goToNextPaper() and goToPrevPaper() functions with bounds checking and animation\n7. Added .mobile-page-turn CSS animation (400ms fade/slide effect)\n8. Added isDraggingContent flag guards in makeDraggable() and attachStickerDragHandlers() to prevent swipe during drag\n9. Added window resize listener to switch rendering modes when crossing 768px threshold\n10. Desktop navigation functions (handleLeftPageTurn, handleRightPageTurn) remain unchanged\n\nAll acceptance criteria met:\n- Mobile shows one paper at a time\n- Swipe left/right navigates between papers\n- Page counter shows current paper / total papers (1-indexed)\n- Swipe blocked during drag operations\n- Desktop two-page spread works as before\n- Resize switches modes seamlessly\n\nThe implementation preserves all existing functionality while adding mobile-first single-paper navigation."
+}

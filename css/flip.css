@@ -1,0 +1,424 @@
+/* ============================================================
+   FLIP.CSS — Real physical diary page-turning
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #1a0f06;
+  font-family: 'Caveat', cursive;
+}
+
+/* ── Scene ── */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Wooden table fills scene */
+.table-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/images/cover.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #6b3f1a;
+  filter: brightness(0.55) blur(3px);
+  transform: scale(1.05);
+}
+
+/* ══════════════════════════════════════════════════════
+   THE BOOK
+   Sized to match the open diary in your spread.jpg.
+   Pages stack inside it.
+══════════════════════════════════════════════════════ */
+.book {
+  position: relative;
+  z-index: 10;
+  width:  min(920px, 94vw);
+  height: min(620px, 84vh);
+  /* Book shadow on the table */
+  filter: drop-shadow(0 24px 60px rgba(0,0,0,0.7))
+          drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+  /* perspective so 3D page-turn works */
+  perspective: 2500px;
+  perspective-origin: 50% 50%;
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE — one full spread (left + right)
+   Each page is a child of .book, absolutely positioned.
+   They stack; the current page is on top (highest z-index).
+══════════════════════════════════════════════════════ */
+.page {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: left center;   /* pivot = center spine (left edge of right half) */
+  user-select: none;
+}
+
+/* The spread photo IS the page face */
+.page__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 4px 12px 12px 4px;
+}
+
+/* Front face — the spread photo */
+.page__face--front {
+  background-image: url('../assets/images/spread.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #f0e4d0;
+}
+
+/* Back face — reverse side of the paper (slightly darker) */
+.page__face--back {
+  background-image: url('../assets/images/spread.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #e8d8c0;
+  transform: rotateY(180deg);
+  filter: brightness(0.92);
+}
+
+/* ── Content overlay — sits on top of the photo ── */
+.page__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  pointer-events: none; /* elements inside re-enable as needed */
+  /* Match your spread photo's book area */
+  padding: 0;
+}
+
+/* Left page text area */
+.page__left {
+  position: absolute;
+  top:    5.5%;
+  left:   8%;
+  width:  39%;
+  bottom: 5.5%;
+  pointer-events: all;
+  overflow: hidden;
+  padding: 5% 4% 4% 5%;
+}
+
+/* Right page text area */
+.page__right {
+  position: absolute;
+  top:    5.5%;
+  right:  8%;
+  width:  39%;
+  bottom: 5.5%;
+  pointer-events: all;
+  overflow: hidden;
+  padding: 5% 5% 4% 4%;
+}
+
+/* Center spine shadow — adds depth */
+.page__spine {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: calc(50% - 12px);
+  width: 24px;
+  background: linear-gradient(90deg,
+    rgba(0,0,0,0.18) 0%,
+    rgba(0,0,0,0.06) 40%,
+    rgba(0,0,0,0.06) 60%,
+    rgba(0,0,0,0.18) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Page text styles ── */
+.pg-date {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.58rem, 1vw, 0.8rem);
+  color: #6b4a30;
+  text-align: right;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  margin-bottom: 1px;
+}
+.pg-heart {
+  text-align: right;
+  color: #b07080;
+  font-size: 0.72rem;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+.pg-title {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(1.1rem, 2vw, 1.7rem);
+  color: #3a2010;
+  line-height: 1.1;
+  margin-bottom: 7px;
+}
+.pg-body {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.68rem, 1.2vw, 0.9rem);
+  color: #3a2010;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.pg-list {
+  list-style: none;
+  margin: 5px 0;
+  padding: 0;
+}
+.pg-list li {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.68rem, 1.15vw, 0.88rem);
+  color: #3a2010;
+  padding: 2px 0 2px 16px;
+  position: relative;
+  line-height: 1.5;
+}
+.pg-list li::before {
+  content: '♡';
+  position: absolute;
+  left: 0; top: 3px;
+  color: #b07080;
+  font-size: 0.6rem;
+}
+
+/* ══════════════════════════════════════════════════════
+   DRAGGABLE ELEMENTS (polaroids, note cards)
+   Inside .page__left or .page__right
+══════════════════════════════════════════════════════ */
+.d-el {
+  position: absolute;
+  cursor: default;
+  user-select: none;
+  touch-action: none;
+}
+.edit-mode .d-el { cursor: grab; }
+.edit-mode .d-el:hover { outline: 2px dashed rgba(168,96,110,0.5); outline-offset:3px; }
+.edit-mode .d-el.sel  { outline: 2px solid #a8606e; outline-offset:3px; cursor:grabbing; z-index:30; }
+
+.d-el .rz { display:none; position:absolute; bottom:-7px; right:-7px; width:15px; height:15px; background:#a8606e; border-radius:50%; border:2px solid #fff; cursor:se-resize; z-index:5; }
+.d-el .ro { display:none; position:absolute; top:-21px; right:-6px; width:19px; height:19px; background:rgba(248,240,224,0.95); border:1px solid rgba(168,96,110,0.5); border-radius:50%; cursor:crosshair; font-size:0.8rem; color:#a8606e; align-items:center; justify-content:center; }
+.edit-mode .d-el.sel .rz { display:block; }
+.edit-mode .d-el.sel .ro { display:flex; }
+
+/* Polaroid */
+.polaroid {
+  background: #faf6f0;
+  padding: 7px 7px 25px 7px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.28);
+}
+.polaroid::before {
+  content:''; position:absolute; top:-9px; left:50%; transform:translateX(-50%) rotate(-2deg);
+  width:55%; height:15px; background:rgba(210,180,140,0.6); border-radius:2px; z-index:2;
+}
+.pol-img {
+  width:100%; aspect-ratio:1; object-fit:cover; display:block;
+  background: linear-gradient(135deg,#d4a76a,#a06830);
+}
+.pol-img.loaded { background:none; }
+.pol-cap {
+  position:absolute; bottom:4px; left:0; right:0;
+  text-align:center; font-size:0.65rem; color:#7a5c42;
+}
+.pol-hint {
+  display:none; position:absolute; inset:7px 7px 25px 7px;
+  background:rgba(245,234,216,0.85); align-items:center; justify-content:center;
+  flex-direction:column; font-size:0.7rem; color:#8a5a6a; cursor:pointer; z-index:3;
+  text-align:center; gap:3px;
+}
+.edit-mode .polaroid .pol-hint { display:flex; }
+
+/* Note card */
+.note-card {
+  padding: 11px 13px 13px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.2);
+  clip-path: polygon(
+    0% 6%,2% 2%,5% 7%,7% 1%,10% 5%,13% 0%,16% 4%,
+    19% 1%,22% 5%,25% 0%,28% 4%,31% 1%,34% 5%,
+    37% 0%,40% 3%,43% 0%,46% 4%,49% 1%,52% 5%,
+    55% 0%,58% 3%,61% 0%,64% 4%,67% 1%,70% 5%,
+    73% 0%,76% 3%,79% 0%,82% 4%,85% 1%,88% 5%,
+    91% 0%,94% 3%,97% 0%,100% 3%,
+    100% 100%,0% 100%
+  );
+}
+.note-card.nc-w  { background:#f8f0e0; }
+.note-card.nc-y  { background:#fdf6d3; }
+.note-card.nc-p  { background:#fde8ea; }
+.nc-title { font-size:clamp(0.75rem,1.3vw,0.9rem); color:#5a3a20; font-weight:600; text-decoration:underline; text-decoration-color:rgba(90,58,32,0.3); text-underline-offset:2px; margin-bottom:4px; }
+.nc-text  { font-size:clamp(0.68rem,1.2vw,0.85rem); color:#3a2010; line-height:1.6; white-space:pre-wrap; }
+.nc-heart { display:block; text-align:center; color:#b07080; font-size:0.75rem; margin-top:5px; }
+.nc-flower{ position:absolute; bottom:6px; right:8px; font-size:1rem; opacity:0.5; pointer-events:none; }
+
+/* Edit contenteditable */
+.edit-mode [contenteditable="true"] {
+  outline:none; border:1px dashed rgba(168,96,110,0.45); border-radius:3px;
+  padding:1px 4px; background:rgba(255,255,255,0.1); cursor:text;
+}
+.edit-mode [contenteditable="true"]:focus { background:rgba(255,255,255,0.22); border-color:rgba(168,96,110,0.8); }
+.edit-mode .pg-date:empty::before    { content:'Date…';       color:rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+.edit-mode .pg-title:empty::before   { content:'Title…';      color:rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+.edit-mode .pg-body:empty::before    { content:'Write here…'; color:rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+
+/* ══════════════════════════════════════════════════════
+   PAGE CORNER PEEL — hover on bottom-right corner
+   shows a subtle curl that invites the user to drag
+══════════════════════════════════════════════════════ */
+.page__corner-hit {
+  position: absolute;
+  bottom: 0; right: 0;
+  width:  80px;
+  height: 80px;
+  cursor: pointer;
+  z-index: 50;
+  /* visual corner fold */
+}
+
+.page__corner-hit::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width:  0; height: 0;
+  transition: width 0.22s ease, height 0.22s ease;
+  border-style: solid;
+  border-width: 0;
+  border-color: transparent transparent rgba(200,170,130,0.45) transparent;
+  border-radius: 0 0 4px 0;
+}
+
+.page__corner-hit:hover::after {
+  width:  44px; height: 44px;
+  border-width: 0 0 44px 44px;
+}
+
+/* Left corner hit area (for going back) */
+.page__corner-hit--left {
+  left: 0; right: auto; bottom: 0;
+  transform: scaleX(-1);
+}
+
+/* ══════════════════════════════════════════════════════
+   PAGE TURN — 3D CSS rotateY around center spine
+   JS adds .turning and sets --progress (0→1)
+══════════════════════════════════════════════════════ */
+.page.is-turning {
+  pointer-events: none;
+}
+
+/* Shadow that sweeps across the facing page during turn */
+.page__turn-shadow {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 50%;
+  right: 0;
+  background: linear-gradient(to left, rgba(0,0,0,0.0), rgba(0,0,0,0.22));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.3s ease;
+}
+.page.is-turning .page__turn-shadow { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   TOOLBAR
+══════════════════════════════════════════════════════ */
+.toolbar {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+.tbtn {
+  width: 38px; height: 38px;
+  border: none; border-radius: 50%;
+  background: rgba(245,234,216,0.88);
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+  transition: background 0.2s, transform 0.15s;
+  display: flex; align-items:center; justify-content:center;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  color: #6b4a32;
+}
+.tbtn:hover { background:rgba(245,234,216,1); transform:scale(1.08); }
+.tbtn.active { background:#a8606e; color:#fff; }
+
+/* Palette */
+.palette {
+  position:absolute; bottom:50px; left:50%; transform:translateX(-50%);
+  z-index:100; display:flex; gap:8px; align-items:center;
+  background:rgba(245,234,216,0.92); border-radius:22px; padding:7px 16px;
+  box-shadow:0 3px 14px rgba(0,0,0,0.2); backdrop-filter:blur(6px);
+}
+.pbtn {
+  padding:4px 11px; border:1px solid rgba(168,96,110,0.3); border-radius:14px;
+  background:transparent; color:#6b4a32; font-family:'Caveat',cursive; font-size:0.88rem;
+  cursor:pointer; transition:background 0.15s;
+}
+.pbtn:hover { background:rgba(168,96,110,0.12); }
+
+/* Element toolbar */
+.eltb {
+  position:absolute; z-index:110; display:flex; gap:5px;
+  background:rgba(245,234,216,0.95); border-radius:18px; padding:4px 9px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.2); backdrop-filter:blur(6px);
+}
+.ebtn {
+  width:28px; height:28px; border:none; border-radius:50%;
+  background:transparent; color:#6b4a32; font-size:1rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:background 0.15s;
+}
+.ebtn:hover { background:rgba(168,96,110,0.15); }
+.edone { color:#5a8a5a; }
+
+/* Hint */
+.hint {
+  position:absolute; bottom:22px; left:50%; transform:translateX(-50%);
+  z-index:100; background:rgba(245,234,216,0.82); border-radius:20px;
+  padding:7px 18px; font-family:'Caveat',cursive; font-size:0.92rem;
+  color:#8a5a6a; box-shadow:0 2px 8px rgba(0,0,0,0.15);
+  backdrop-filter:blur(4px); pointer-events:none;
+  animation: hintFade 4s ease 2s forwards;
+  opacity: 0;
+}
+@keyframes hintFade {
+  0%   { opacity:0; }
+  15%  { opacity:1; }
+  75%  { opacity:1; }
+  100% { opacity:0; }
+}
+
+/* Toast */
+.toast {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+  z-index:200; background:rgba(80,130,80,0.92); color:#fff;
+  font-family:'Caveat',cursive; font-size:1.05rem; padding:9px 22px;
+  border-radius:22px; box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  opacity:0; transition:opacity 0.35s ease, transform 0.35s ease; pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── Mobile ── */
+@media (max-width:680px) {
+  .book { width:99vw; height:88vh; }
+  .page__left  { left:1%; width:46%; padding:6% 2% 4% 3%; }
+  .page__right { right:1%; width:46%; padding:6% 3% 4% 2%; }
+  .toolbar { top:8px; right:8px; }
+}

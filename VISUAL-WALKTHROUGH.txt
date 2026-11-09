@@ -1,0 +1,326 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    SABI DIARY - COMPLETE VISUAL FLOW                   ║
+║                        What You'll See at Each Step                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+
+STEP 1: OPEN HOMEPAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+URL: http://localhost:8000
+
+SCREEN:
+┌────────────────────────────────────────────────┐
+│                                                │
+│           Dark wooden background               │
+│          (with warm candlelight glow)          │
+│                                                │
+│                    ╔══════════╗               │
+│                    ║  SABI    ║               │
+│                    ║ little   ║               │
+│                    ║ things   ║               │
+│                    ║ worth    ║               │
+│                    ║ rememb.. ║               │
+│                    ╚══════════╝               │
+│                  (burgundy book)              │
+│                                                │
+│              ♡ open me ♡                      │
+│         (animated pulsing button)              │
+│                                                │
+│        ✿ Floating petals falling ✿           │
+│                                                │
+└────────────────────────────────────────────────┘
+
+ACTION: Click "open me" button
+
+
+STEP 2: BOOK ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANIMATION:
+- Book rotates and flips open (0.7 seconds)
+- Screen fades to black
+- Redirects to diary.html
+
+
+STEP 3: LOGIN PAGE APPEARS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+URL: http://localhost:8000/diary.html
+
+SCREEN:
+┌────────────────────────────────────────────────────────────┐
+│                                                            │
+│                  Dark wooden background                    │
+│                                                            │
+│              ┌──────────────────────────┐                 │
+│              │   SABI Diary (left page) │                 │
+│              │                          │                 │
+│              │  Before you enter...     │                 │
+│              │  open your memories      │                 │
+│              │                          │                 │
+│              │  email                   │                 │
+│              │  [________________]      │                 │
+│              │                          │                 │
+│              │  password                │                 │
+│              │  [________________]      │                 │
+│              │                          │                 │
+│              │    [Open Diary]          │                 │
+│              │                          │                 │
+│              └──────────────────────────┘                 │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+
+ELEMENTS:
+- Login form inside diary book (looks like diary pages)
+- Email input field
+- Password input field
+- "Open Diary" button
+
+ACTION: Enter email and password, click "Open Diary"
+
+
+STEP 4: LOGIN PROCESSING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WHAT HAPPENS:
+- Button shows "opening..." temporarily
+- Verifies email/password with Supabase
+- Creates profile if new user (role = "owner")
+- Fetches diary data from Supabase
+- Loads all memories and pages
+
+
+STEP 5: LOGIN SUCCEEDS - DIARY PAGES APPEAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCREEN (Desktop - 2 pages):
+┌────────────────────────────────────────────────────────────┐
+│                                                            │
+│              ┌──────────────┬──────────────┐              │
+│              │ (Left page)  │ (Right page) │              │
+│              │              │              │              │
+│              │   Page 1     │   Page 2     │              │
+│              │              │              │              │
+│              │  (handmade   │ (handmade    │              │
+│              │   paper      │  paper       │              │
+│              │   texture)   │  texture)    │              │
+│              │              │              │              │
+│              │              │              │              │
+│              │              │              │              │
+│              │              │              │              │
+│              └──────────────┴──────────────┘              │
+│                                                            │
+│         Page Counter: 1 / 20    [✨ Add] [🏠]            │
+│         EDIT MODE                                         │
+│                                                            │
+└────────────────────────────────────────────────────────────┘
+
+SCREEN (Mobile - 1 page, 390×844):
+┌─────────────────────┐
+│                     │
+│   Diary page 1      │
+│   (handmade paper)  │
+│                     │
+│                     │
+│                     │
+│                     │
+│                     │
+│                     │
+│                     │
+│                     │
+│                     │
+│  1/20  [✨ Add] [🏠]│
+│  EDIT MODE          │
+│                     │
+└─────────────────────┘
+
+ELEMENTS VISIBLE:
+- Handmade diary paper (aged cream color)
+- Empty pages ready for memories
+- Page counter: "1 / 20"
+- ✨ Add button
+- 🏠 Home button
+- "EDIT MODE" indicator
+
+
+STEP 6: ADD MEMORY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACTION: Tap "✨ Add" button
+
+MODAL APPEARS:
+┌──────────────────────────────┐
+│                              │
+│      ✨ New Memory            │
+│                              │
+│  Date:    [Today's date]    │
+│  Time:    [Current time]    │
+│  Title:   [____________]    │
+│  Memory:  [____________]    │
+│           [____________]    │
+│  Photo:   [Choose file]     │
+│  Note:    [____________]    │
+│  Sticker: 🌸💜🍃🤍⭐🦋🌿🌼🩷 │
+│                              │
+│         [Cancel] [Add Memory]│
+│                              │
+└──────────────────────────────┘
+
+FORM FIELDS:
+✓ Date (pre-filled today)
+✓ Time (pre-filled current time)
+✓ Title (your heading)
+✓ Memory (your story)
+✓ Photo (optional upload)
+✓ Note (optional short note)
+✓ Sticker (9 emoji options)
+
+
+STEP 7: FILL FORM & SAVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXAMPLE:
+Title:   "First Memory"
+Memory:  "Beautiful sunny day, went to the park"
+Sticker: 🌸 (select one)
+
+ACTION: Click "Add Memory"
+
+RESULT:
+✨ Memory saved! (toast notification)
+Modal closes
+Memory appears on current page
+
+
+STEP 8: MEMORY APPEARS ON PAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCREEN:
+┌──────────────────────────────┐
+│                              │
+│    Jan 21, 2025 • 2:30 PM    │
+│                              │
+│    First Memory              │
+│    Beautiful sunny day, went │
+│    to the park               │
+│                          🌸   │
+│                              │
+│                              │
+│                              │
+│  1/20  [✨ Add] [🏠]          │
+│                              │
+└──────────────────────────────┘
+
+MEMORY SHOWS:
+- Date and time
+- Title in elegant font
+- Memory text
+- Sticker 🌸 rotated naturally
+
+
+STEP 9: NAVIGATE TO NEXT PAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DESKTOP:
+- Click right page → advances
+- Click left page → goes back
+
+MOBILE:
+- Swipe left (right→left) → advances
+- Swipe right (left→right) → goes back
+
+PAGE COUNTER UPDATES:
+1/20 → 2/20 → 3/20 ... → 20/20
+
+
+STEP 10: EMPTY PAGE 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SCREEN:
+┌──────────────────────────────┐
+│                              │
+│                              │
+│   (empty page, ready for     │
+│    next memory)              │
+│                              │
+│                              │
+│                              │
+│                              │
+│  2/20  [✨ Add] [🏠]          │
+│                              │
+└──────────────────────────────┘
+
+ACTION: Tap ✨ Add again, add another memory
+
+REPEAT: Can add memories on any page
+
+
+STEP 11: CONTINUE THROUGH ALL PAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Page 1/20:   Memories
+Page 2/20:   Memories
+Page 3/20:   Empty (ready for more)
+...
+Page 10/20:  (last page of spread 5)
+...
+Page 19/20:  Memories or empty
+Page 20/20:  (back cover equivalent)
+
+TOTAL: 10 spreads = 20 pages
+
+
+STEP 12: REFRESH PAGE - MEMORIES PERSIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACTION: Press F5 (refresh)
+
+WHAT HAPPENS:
+- Page reloads
+- Supabase pulls all your memories
+- Memories reappear on same pages
+- Same position and stickers
+- Nothing is lost
+
+
+STEP 13: LOG OUT & LOG BACK IN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ACTION: Go back to http://localhost:8000
+ACTION: Click "open me" again
+
+SCREEN: Login form appears again
+
+ACTION: Enter SAME email & password
+
+RESULT:
+- All memories load
+- Everything is there
+- No data lost
+- Can continue adding more
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+SUMMARY OF COMPLETE FLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ Open homepage → See beautiful book
+2. ✅ Click "open me" → Animate to diary
+3. ✅ See login form → Enter credentials
+4. ✅ Click "Open Diary" → Verify & load
+5. ✅ See diary pages → 20 empty pages ready
+6. ✅ Click ✨ Add → Form opens
+7. ✅ Fill form → Add memory
+8. ✅ Memory appears → On current page
+9. ✅ Navigate pages → Swipe or click
+10. ✅ Continue adding → On any page
+11. ✅ Refresh page → Memories persist
+12. ✅ Log out & back in → Everything saved
+
+═══════════════════════════════════════════════════════════════════════════
+
+This is your complete SABI diary experience! 🎉
+
+═══════════════════════════════════════════════════════════════════════════

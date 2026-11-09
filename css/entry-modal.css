@@ -1,0 +1,577 @@
+/**
+ * SABI Diary — Entry Modal Styles
+ * Beautiful modal for creating new diary entries
+ */
+
+/* ════════════════════════════════════════════
+   MODAL CONTAINER
+════════════════════════════════════════════ */
+.entry-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.entry-modal.open {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.entry-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 2, 8, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: -1;
+}
+
+/* ════════════════════════════════════════════
+   MODAL CONTENT
+════════════════════════════════════════════ */
+.entry-modal__container {
+  position: relative;
+  width: min(600px, 90vw);
+  max-height: 90vh;
+  background: linear-gradient(160deg, #fdf4ec 0%, #f8ead8 50%, #f2e0cc 100%);
+  border-radius: 12px;
+  box-shadow:
+    0 40px 90px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(120, 20, 40, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(160, 80, 100, 0.2);
+}
+
+/* ════════════════════════════════════════════
+   HEADER
+════════════════════════════════════════════ */
+.entry-modal__header {
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(160, 80, 100, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+}
+
+.entry-modal__title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: #5a1a30;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.entry-modal__close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: rgba(90, 26, 48, 0.6);
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.entry-modal__close:hover {
+  color: rgba(90, 26, 48, 0.95);
+}
+
+/* ════════════════════════════════════════════
+   BODY (FORM)
+════════════════════════════════════════════ */
+.entry-modal__body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Subtle paper lines */
+.entry-modal__body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 28px,
+    rgba(180, 100, 110, 0.03) 28px,
+    rgba(180, 100, 110, 0.03) 29px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ════════════════════════════════════════════
+   FORM ELEMENTS
+════════════════════════════════════════════ */
+.entry-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.entry-form__group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.entry-form__group label {
+  font-family: 'Caveat', cursive;
+  font-size: 0.85rem;
+  color: #7a3a50;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+}
+
+.entry-form__input,
+.entry-form__textarea {
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  color: #4a2030;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(160, 80, 100, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.entry-form__input:focus,
+.entry-form__textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(160, 80, 100, 0.4);
+  box-shadow: 0 0 0 2px rgba(160, 80, 100, 0.1);
+}
+
+.entry-form__input--large {
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 10px 14px;
+}
+
+.entry-form__textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════
+   CONTROLS
+════════════════════════════════════════════ */
+.entry-form__controls {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0 20px;
+}
+
+.entry-form__btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid rgba(160, 80, 100, 0.25);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  color: #5a1a30;
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.entry-form__btn:hover {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(160, 80, 100, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.entry-form__btn--secondary {
+  background: rgba(160, 80, 100, 0.08);
+  border-color: rgba(160, 80, 100, 0.25);
+}
+
+.entry-form__btn--secondary:hover {
+  background: rgba(160, 80, 100, 0.15);
+}
+
+/* ════════════════════════════════════════════
+   PHOTO PREVIEW
+════════════════════════════════════════════ */
+.entry-form__preview {
+  margin-bottom: 18px;
+  padding: 12px;
+  background: rgba(160, 80, 100, 0.05);
+  border-radius: 6px;
+  border: 1px dashed rgba(160, 80, 100, 0.2);
+}
+
+.entry-form__preview-label {
+  font-family: 'Caveat', cursive;
+  font-size: 0.85rem;
+  color: #7a3a50;
+  margin-bottom: 10px;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+}
+
+.entry-form__photo-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+
+.entry-form__photo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entry-form__photo-img-wrap {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #d4a76a, #a06830);
+}
+
+.entry-form__photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.entry-form__photo-caption {
+  font-family: 'Caveat', cursive;
+  font-size: 0.7rem;
+  color: #5a1a30;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(160, 80, 100, 0.15);
+  border-radius: 3px;
+  padding: 3px 5px;
+  text-align: center;
+}
+
+.entry-form__photo-remove {
+  background: rgba(160, 80, 100, 0.8);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.entry-form__photo-remove:hover {
+  background: rgba(160, 80, 100, 1);
+}
+
+/* ════════════════════════════════════════════
+   STICKER PALETTE
+════════════════════════════════════════════ */
+.entry-form__sticker-palette {
+  margin-bottom: 18px;
+  padding: 14px;
+  background: rgba(160, 80, 100, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(160, 80, 100, 0.2);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.entry-form__palette-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: 'Caveat', cursive;
+  font-size: 0.85rem;
+  color: #7a3a50;
+  letter-spacing: 0.05em;
+}
+
+.entry-form__palette-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: rgba(90, 26, 48, 0.6);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.entry-form__palette-close:hover {
+  color: rgba(90, 26, 48, 0.95);
+}
+
+.entry-form__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entry-form__category {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entry-form__category-name {
+  font-family: 'Caveat', cursive;
+  font-size: 0.75rem;
+  color: #8a5a6a;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+}
+
+.entry-form__sticker-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.entry-form__sticker-btn {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(160, 80, 100, 0.2);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 0 0 auto;
+}
+
+.entry-form__sticker-btn:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(160, 80, 100, 0.4);
+  transform: scale(1.1);
+}
+
+/* ════════════════════════════════════════════
+   CANVAS / PREVIEW
+════════════════════════════════════════════ */
+.entry-form__canvas {
+  margin: 18px 0;
+  padding: 12px;
+  background: rgba(160, 80, 100, 0.05);
+  border-radius: 6px;
+  border: 1px solid rgba(160, 80, 100, 0.15);
+}
+
+.entry-form__canvas-label {
+  font-family: 'Caveat', cursive;
+  font-size: 0.85rem;
+  color: #7a3a50;
+  margin-bottom: 8px;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+}
+
+.entry-form__canvas-area {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/2;
+  background: linear-gradient(160deg, #fdf4ec 0%, #f8ead8 50%, #f2e0cc 100%);
+  border-radius: 4px;
+  border: 1px dashed rgba(160, 80, 100, 0.2);
+  overflow: hidden;
+}
+
+.entry-form__canvas-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(122, 58, 80, 0.4);
+  font-family: 'Caveat', cursive;
+  font-size: 0.9rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.entry-form__preview-polaroid {
+  padding: 6px;
+  background: white;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+  max-width: 40%;
+}
+
+.entry-form__preview-pol-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  border-radius: 1px;
+}
+
+.entry-form__preview-pol-cap {
+  font-family: 'Caveat', cursive;
+  font-size: 0.6rem;
+  color: #7a5c42;
+  text-align: center;
+  margin-top: 4px;
+  padding: 0 2px;
+  word-wrap: break-word;
+}
+
+.entry-form__preview-sticker {
+  user-select: none;
+  z-index: 10;
+  transition: filter 0.2s;
+}
+
+.entry-form__preview-sticker:hover {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* ════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════ */
+.entry-modal__footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(160, 80, 100, 0.15);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: linear-gradient(to top,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+}
+
+.entry-modal__btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+.entry-modal__btn--cancel {
+  background: rgba(160, 80, 100, 0.1);
+  color: #5a1a30;
+  border: 1px solid rgba(160, 80, 100, 0.25);
+}
+
+.entry-modal__btn--cancel:hover {
+  background: rgba(160, 80, 100, 0.2);
+}
+
+.entry-modal__btn--save {
+  background: linear-gradient(135deg, #8c3f5a, #6e2a45);
+  color: #f5dcc8;
+  box-shadow: 0 4px 12px rgba(140, 63, 90, 0.3);
+}
+
+.entry-modal__btn--save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(140, 63, 90, 0.4);
+}
+
+/* ════════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════════ */
+.entry-modal__toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: rgba(140, 63, 90, 0.95);
+  color: #f0d0c0;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-family: 'Caveat', cursive;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 500;
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.entry-modal__toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .entry-modal__container {
+    width: 95vw;
+    max-height: 95vh;
+  }
+
+  .entry-modal__header,
+  .entry-modal__body,
+  .entry-modal__footer {
+    padding: 16px;
+  }
+
+  .entry-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .entry-form__controls {
+    flex-direction: column;
+  }
+
+  .entry-form__photo-list {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  }
+
+  .entry-modal__footer {
+    flex-direction: column-reverse;
+  }
+
+  .entry-modal__btn {
+    width: 100%;
+  }
+}
+
+/* Scrollbar styling */
+.entry-modal__body::-webkit-scrollbar,
+.entry-form__sticker-palette::-webkit-scrollbar {
+  width: 6px;
+}
+
+.entry-modal__body::-webkit-scrollbar-track,
+.entry-form__sticker-palette::-webkit-scrollbar-track {
+  background: rgba(160, 80, 100, 0.05);
+  border-radius: 3px;
+}
+
+.entry-modal__body::-webkit-scrollbar-thumb,
+.entry-form__sticker-palette::-webkit-scrollbar-thumb {
+  background: rgba(160, 80, 100, 0.25);
+  border-radius: 3px;
+}
+
+.entry-modal__body::-webkit-scrollbar-thumb:hover,
+.entry-form__sticker-palette::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 80, 100, 0.4);
+}

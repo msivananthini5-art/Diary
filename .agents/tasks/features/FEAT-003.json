@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Adapt the login flow for mobile-first experience in diary.html. On mobile (≤768px), show only the login paper (page-left) filling the screen, hide the decorative right page. On desktop (>768px), preserve the existing two-page login spread. After successful login, animate away the login paper(s) and render the diary. This feature depends on FEAT-001 CSS and FEAT-002 rendering logic.",
+  "status": "completed",
+  "steps": [
+    "1. Locate the showLoginSpread() function at line ~2166 in diary.html. This function currently renders both page-left (login-paper) and page-right (login-right-paper) in the spread.",
+    "2. Modify showLoginSpread() to branch on isMobile(): (a) if mobile, render only the page-left login-paper div (omit the page-right login-right-paper entirely from the HTML string); (b) if desktop, render both pages as currently done.",
+    "3. Add mobile-specific CSS for .login-paper inside the @media(max-width:768px) block: ensure the login paper fills the viewport comfortably with appropriate padding. The existing .login-content has padding:8% 10% which should work, but verify that .login-paper itself is width:100%, height:100vh or similar on mobile.",
+    "4. Adjust the .login-right-paper CSS for mobile (if it appears at all, it should be hidden): add display:none inside the mobile media query to ensure it never shows on mobile even if accidentally rendered.",
+    "5. Test the login UI on mobile: ensure the login form (email, password, submit button) is touch-friendly. The .login-input fields should have a comfortable font-size (at least 16px to prevent iOS zoom). The .login-submit button should meet the 44x44px minimum touch target.",
+    "6. In the handleLogin() function (starts at line ~2218), after successful authentication and data load, the code animates the login pages away. Modify this section to branch on isMobile(): (a) on mobile, only animate the single login-paper (page-left) away; (b) on desktop, animate both login-paper and login-right-paper as currently done. The existing animation uses .login-page-exit class.",
+    "7. Update the .login-page-exit animation if needed: on mobile, the single paper can fade out or slide away (no need for a two-page flip effect). On desktop, preserve the existing animation.",
+    "8. After the login animation completes (setTimeout at line ~2254), the code calls renderSpread(). Ensure this correctly branches to mobile or desktop rendering based on the current viewport width (this should already work if FEAT-002 is complete).",
+    "9. On mobile after login, the first paper shown should be mobileCurrentPaperIndex=0 (the first paper of the diary). Verify that the state is initialized correctly."
+  ],
+  "acceptance_criteria": [
+    "On mobile (≤768px), the login screen shows only the login paper (page-left) filling the viewport; the decorative right page is not rendered or is hidden",
+    "Login form inputs and button are touch-friendly (inputs at least 16px font-size, button at least 44x44px)",
+    "On desktop (>768px), the login screen shows both pages (login paper + decorative right page) exactly as before",
+    "After successful login on mobile, the single login paper animates away and the first diary paper appears",
+    "After successful login on desktop, both login pages animate away and the first diary spread appears",
+    "The login flow does not break existing Supabase authentication or data loading"
+  ],
+  "verification": [
+    "Open diary.html on mobile (≤768px) without an active session. Confirm only the login paper is visible, no decorative right page.",
+    "Log in on mobile: confirm the login paper animates away and the first diary paper (paper 1) appears.",
+    "Open diary.html on desktop (>768px) without an active session. Confirm both login pages are visible.",
+    "Log in on desktop: confirm both pages animate away and the first diary spread appears.",
+    "Verify that no JavaScript errors occur during login on either viewport size."
+  ],
+  "blocked_reason": null,
+  "findings": "Successfully implemented mobile-first login flow adaptation. Changes include: (1) Modified showLoginSpread() to conditionally render only the login paper on mobile (≤768px) and both pages on desktop (>768px); (2) Modified handleLogin() to animate only the single login paper on mobile and both pages on desktop; (3) Added mobile-specific CSS within @media(max-width:768px) including: login-paper with width:100% and min-height:100vh, login-right-paper with display:none !important, login-input with font-size:16px to prevent iOS zoom, login-submit with min-width/min-height:44px for touch-friendly target; (4) All acceptance criteria met: mobile shows only login paper, desktop preserves two-page spread, inputs and button are touch-friendly, animations work correctly for both viewports, no JavaScript errors introduced; (5) The implementation preserves existing Supabase authentication flow and does not affect FEAT-001/FEAT-002 functionality."
+}

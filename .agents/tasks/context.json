@@ -1,0 +1,15 @@
+{
+  "project_type": "Self-contained HTML diary app with inline CSS and JavaScript, Supabase auth",
+  "language": "HTML, CSS, JavaScript (ES6+)",
+  "build_system": "None - single-file HTML application with inline styles and scripts",
+  "test_framework": "None - manual testing required",
+  "build_command": "N/A - no build step required",
+  "test_command": "Open diary.html in browser at various viewport widths (mobile: ≤768px, desktop: >768px)",
+  "verification_instructions": "1. Test on desktop (>768px): verify two-page spread shows as-is. 2. Test on mobile (≤768px): verify single paper view, swipe left/right navigation, no horizontal scroll, touch-friendly controls. 3. Test login flow on both desktop and mobile. 4. Verify existing memories remain on their assigned papers. 5. Test drag interactions for photos, stickers, text on both desktop (mouse) and mobile (touch).",
+  "snapshot_or_generated_files": null,
+  "environment_constraints": "diary.html is a ~2350-line self-contained file. All changes must be made to this single file. The app uses Supabase for authentication via external js/supabase-*.js files but these should not be modified. No server restart needed - just reload the page.",
+  "contribution_requirements": "Do NOT reposition or reassign existing memories to different papers. Preserve all existing content, positions, stickers, botanical elements. Maintain diary aesthetic (paper textures, handwritten fonts, ruled lines). Keep role-based access (owner=editor, viewer=viewer). Preserve the Supabase authentication flow. No breaking changes to desktop functionality.",
+  "key_patterns": "Data model: DiaryState.spreads array, each spread has spreadNum, leftMemories[], rightMemories[]. Navigation: DiaryState.currentSpreadIndex tracks current spread. Rendering: renderSpread() generates HTML for current spread's two pages. Page turns: handleLeftPageTurn() / handleRightPageTurn() animate with CSS classes (flip-forward, flip-back, flip-backward) and update currentSpreadIndex. CSS animations: .page-right.flip-forward uses rotateY transforms. Login: showLoginSpread() renders special login HTML, handleLogin() authenticates and calls renderSpread(). Existing mobile CSS: @media(max-width:768px) at line 816 only adjusts book size and photo size.",
+  "relevant_files": ["c:\\Users\\r21ec\\Downloads\\New folder\\diary.html", "c:\\Users\\r21ec\\Downloads\\New folder\\index.html"],
+  "directory_structure": "Root contains diary.html (main app), index.html (landing page), js/ folder with supabase-*.js files, various test HTML files, and .agents/ folder for workflow artifacts."
+}

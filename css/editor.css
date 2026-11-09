@@ -1,0 +1,161 @@
+/* ============================================================
+   EDITOR.CSS — Edit mode specific styles
+   Drag handles, resize corners, rotation state, active outlines
+   ============================================================ */
+
+/* ── Global edit-mode body class ── */
+body.edit-mode-active .page-content {
+  /* Subtle lined paper guide in edit mode */
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    rgba(160, 100, 80, 0.07) 27px,
+    rgba(160, 100, 80, 0.07) 28px
+  );
+}
+
+/* ── Editable text highlight ── */
+body.edit-mode-active [contenteditable="true"] {
+  outline: none;
+  border: 1px dashed rgba(168, 96, 110, 0.45);
+  border-radius: 4px;
+  padding: 2px 5px;
+  transition: border-color 0.15s, background 0.15s;
+  cursor: text;
+}
+
+body.edit-mode-active [contenteditable="true"]:focus {
+  border-color: rgba(168, 96, 110, 0.8);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(168, 96, 110, 0.1);
+}
+
+body.edit-mode-active [contenteditable="true"]:empty::before {
+  color: rgba(168, 96, 110, 0.5);
+  font-style: italic;
+  pointer-events: none;
+}
+
+.page-date[contenteditable="true"]:empty::before     { content: 'Date...'; }
+.page-title[contenteditable="true"]:empty::before    { content: 'Title...'; }
+.page-text[contenteditable="true"]:empty::before     { content: 'Write something...'; }
+.note-card__title[contenteditable="true"]:empty::before { content: 'Note title...'; }
+.note-card__text[contenteditable="true"]:empty::before  { content: 'Write a note...'; }
+
+/* ── Drag-handle indicator (top-left of selected element) ── */
+.edit-mode .draggable-element.is-selected::before {
+  content: '⠿';
+  position: absolute;
+  top: -18px;
+  left: 0;
+  font-size: 0.85rem;
+  color: #a8606e;
+  background: rgba(248, 240, 224, 0.9);
+  border-radius: 4px;
+  padding: 1px 4px;
+  line-height: 1.4;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* ── Rotation indicator badge ── */
+.rotation-badge {
+  display: none;
+  position: absolute;
+  top: -22px;
+  right: 0;
+  font-family: 'Lora', serif;
+  font-size: 0.65rem;
+  color: #a8606e;
+  background: rgba(248, 240, 224, 0.9);
+  border-radius: 4px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.edit-mode .draggable-element.is-selected .rotation-badge {
+  display: block;
+}
+
+/* ── Resize corner handle ── */
+.resize-handle {
+  position: absolute;
+  bottom: -7px;
+  right: -7px;
+  width: 16px;
+  height: 16px;
+  background: #a8606e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  cursor: se-resize;
+  z-index: 50;
+  display: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+.edit-mode .draggable-element.is-selected .resize-handle {
+  display: block;
+}
+
+/* ── Rotation handle (appears top-right) ── */
+.rotate-handle {
+  position: absolute;
+  top: -22px;
+  right: -7px;
+  width: 20px;
+  height: 20px;
+  background: rgba(248, 240, 224, 0.95);
+  border: 1px solid rgba(168, 96, 110, 0.5);
+  border-radius: 50%;
+  cursor: crosshair;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #a8606e;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.edit-mode .draggable-element.is-selected .rotate-handle {
+  display: flex;
+}
+
+/* ── Add photo drag zone — active when file is dragged over a polaroid ── */
+.polaroid.drag-over {
+  outline: 3px dashed #a8606e;
+  outline-offset: 4px;
+  background: rgba(168, 96, 110, 0.06);
+}
+
+/* ── New page button pulse ── */
+.toolbar-btn--add {
+  animation: none;
+}
+
+.toolbar-btn--add:hover {
+  background: rgba(200, 230, 200, 0.95);
+}
+
+/* ── Mobile edit adjustments ── */
+@media (max-width: 700px) {
+  .add-palette {
+    flex-wrap: wrap;
+    justify-content: center;
+    bottom: 40px;
+    left: 8px;
+    right: 8px;
+    transform: none;
+    border-radius: 14px;
+  }
+
+  .element-toolbar {
+    bottom: 120px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

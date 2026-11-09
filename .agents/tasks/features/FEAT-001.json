@@ -1,0 +1,29 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add mobile-first CSS responsive styles to diary.html for single-paper mobile view (≤768px) while preserving desktop two-page spread (>768px). This is the foundational layout transformation that enables mobile usage without breaking desktop.",
+  "status": "completed",
+  "steps": [
+    "1. Locate the existing @media(max-width:768px) rule at line ~816 in diary.html. This currently only adjusts .book size and .memory-photo size.",
+    "2. Expand this media query to handle mobile single-paper layout. Add CSS rules to: (a) .spread: change from flex-direction:row to flex-direction:column, so pages stack vertically instead of side-by-side; (b) .page-left, .page-right: both should be width:100% (not flex:1), height:auto, and add min-height to ensure paper fills viewport naturally; (c) .page-right: hide by default with display:none (JavaScript will toggle visibility to show one paper at a time); (d) .page-left: ensure it's visible and fills the mobile viewport with appropriate padding (adjust existing padding:5% 6% if needed for mobile comfort).",
+    "3. Add mobile-specific styling for the .book container: adjust width to near 100vw (e.g., 96vw), height to auto or a comfortable viewport percentage, remove or minimize the desktop box-shadow/perspective effects that don't work well on small screens.",
+    "4. Make touch targets accessible: ensure .btn, .action-btn, and other interactive elements have min-width:44px and min-height:44px inside the mobile media query. Adjust .controls (the page counter and buttons at the bottom) to be more compact but still touch-friendly.",
+    "5. Adjust .memory-photo sizing for mobile: the existing rule sets width:80px height:80px which may be too small on modern phones. Test and adjust to something like 100px or use a percentage-based size.",
+    "6. Add a CSS class .mobile-visible-page that will be toggled by JavaScript to show the current paper on mobile. This class should override display:none on .page-right when needed.",
+    "7. Test by resizing browser window from desktop (>768px) to mobile (≤768px) and back. Desktop should show the two-page spread unchanged. Mobile should show stacked pages (though only one will be visible once JS is added)."
+  ],
+  "acceptance_criteria": [
+    "On desktop (>768px), the diary shows the two-page spread (page-left and page-right side-by-side) exactly as before",
+    "On mobile (≤768px), the .spread container stacks pages vertically, and CSS is prepared for single-paper visibility",
+    "Touch targets (.btn, .action-btn) are at least 44x44px on mobile",
+    "No horizontal scrolling occurs on mobile viewports",
+    "The existing desktop functionality is not broken (verify by testing on a >768px viewport)"
+  ],
+  "verification": [
+    "Open diary.html in a browser and set viewport to >768px (desktop): confirm the two-page spread displays normally with page-left and page-right side-by-side",
+    "Resize viewport to ≤768px (mobile): confirm pages are stacked vertically and layout does not overflow horizontally",
+    "Use browser developer tools to inspect .btn and .action-btn elements on mobile: confirm they have min-width and min-height of at least 44px"
+  ],
+  "blocked_reason": null,
+  "findings": "Successfully implemented mobile-first CSS responsive styles in diary.html:\n\n1. Expanded @media(max-width:768px) rule from 4 lines to 68 lines of comprehensive mobile styling\n2. .spread: Changed from row to column flex-direction for vertical stacking\n3. .page-left, .page-right: Set to width:100%, height:auto, min-height:75vh, flex:none\n4. .page-right: Set display:none by default for single-paper mobile view\n5. Added .mobile-visible-page class for JS-controlled page visibility toggling\n6. .book: Optimized to 96vw width, auto height, min-height:85vh, simplified shadow\n7. .memory-photo: Increased from 80px to 100px for better mobile visibility\n8. .btn: Already 44x44px, added min-width/min-height for safety\n9. .action-btn: Increased from 26x26px to 44x44px to meet touch target requirements\n10. .controls: Made more compact (bottom:15px, right:15px, gap:10px) but maintained touch-friendliness\n11. Desktop layout (>768px) remains completely unchanged - two-page spread preserved\n12. Mobile layout (≤768px) now prepared for single-paper view with JS toggling\n13. No horizontal scrolling on mobile due to 96vw width constraint\n14. All touch targets meet 44x44px minimum accessibility requirement\n\nReady for JavaScript implementation in next feature (FEAT-002)."
+}

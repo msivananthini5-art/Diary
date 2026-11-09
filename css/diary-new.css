@@ -1,0 +1,598 @@
+/* ============================================================
+   DIARY-NEW.CSS
+   Your actual spread photo IS the diary.
+   Content overlays sit precisely on the left/right page areas.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #2a1a0a;
+  font-family: 'Caveat', cursive;
+}
+
+/* ── Scene ── */
+.diary-scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   YOUR SPREAD PHOTO — fills the scene exactly
+   This IS the diary. The wooden table, the open book,
+   the flowers, the cream pages — all from your photo.
+══════════════════════════════════════════════════════════ */
+.diary-bg-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONTENT OVERLAY
+   Sits exactly over your photo's page areas.
+   The diary-overlay is sized to match the open book
+   region in your spread photo.
+
+   Your spread photo shows the open diary taking up roughly:
+   - Horizontal: from ~8% to ~92% of the image width
+   - Vertical:   from ~5% to ~95% of the image height
+   - Center spine at ~50% horizontal
+   - Left page:  8%–49%
+   - Right page: 51%–92%
+   These values are calibrated to your actual photo.
+══════════════════════════════════════════════════════════ */
+.diary-overlay {
+  position: absolute;
+  /* Match the open book area in your spread photo */
+  top:    5.5%;
+  left:   7.5%;
+  right:  7.5%;
+  bottom: 5%;
+  display: flex;
+  pointer-events: none; /* pages themselves handle clicks */
+  z-index: 10;
+}
+
+/* ── Individual page area ── */
+.page-area {
+  position: relative;
+  pointer-events: all;
+  overflow: hidden;
+}
+
+.page-area--left {
+  /* Left page: from left edge to just before center spine */
+  width: 47%;
+  margin-right: 6%; /* spine gap */
+  padding: 5% 5% 5% 7%;
+}
+
+.page-area--right {
+  /* Right page: just after center spine to right edge */
+  width: 47%;
+  padding: 5% 7% 5% 5%;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE TEXT — transparent background so your photo shows through
+══════════════════════════════════════════════════════════ */
+
+/* Date */
+.page-date {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.6rem, 1.1vw, 0.82rem);
+  color: #6b4a30;
+  text-align: right;
+  letter-spacing: 0.06em;
+  font-style: italic;
+  margin-bottom: 1px;
+  min-height: 1em;
+}
+
+.page-date-heart {
+  text-align: right;
+  color: #b07080;
+  font-size: 0.75rem;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+/* Title */
+.page-title {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  color: #4a2e18;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  min-height: 0.5em;
+}
+
+/* Body text */
+.page-body {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.75rem, 1.35vw, 0.95rem);
+  color: #3a2010;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  min-height: 0.5em;
+}
+
+/* List */
+.page-list {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+.page-list li {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.75rem, 1.3vw, 0.92rem);
+  color: #3a2010;
+  padding: 2px 0 2px 18px;
+  position: relative;
+  line-height: 1.5;
+}
+.page-list li::before {
+  content: '♡';
+  position: absolute;
+  left: 0;
+  color: #b07080;
+  font-size: 0.65rem;
+  top: 4px;
+}
+
+/* ── Edit mode: make text fields visibly editable ── */
+.edit-mode .page-date[contenteditable],
+.edit-mode .page-title[contenteditable],
+.edit-mode .page-body[contenteditable],
+.edit-mode .page-list li[contenteditable] {
+  outline: none;
+  border: 1px dashed rgba(168,96,110,0.5);
+  border-radius: 3px;
+  padding: 2px 4px;
+  background: rgba(255,255,255,0.12);
+  cursor: text;
+}
+.edit-mode .page-date[contenteditable]:focus,
+.edit-mode .page-title[contenteditable]:focus,
+.edit-mode .page-body[contenteditable]:focus {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(168,96,110,0.8);
+}
+
+/* Empty placeholder */
+.edit-mode .page-date:empty::before    { content: 'Date…';           color: rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+.edit-mode .page-title:empty::before   { content: 'Title…';          color: rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+.edit-mode .page-body:empty::before    { content: 'Write here…';     color: rgba(168,96,110,0.5); font-style:italic; pointer-events:none; }
+
+/* ══════════════════════════════════════════════════════════
+   DRAGGABLE ELEMENTS — polaroids & note cards
+   Positioned absolutely inside their page-area
+══════════════════════════════════════════════════════════ */
+.d-el {
+  position: absolute;
+  cursor: default;
+  user-select: none;
+  touch-action: none;
+  z-index: 20;
+}
+
+.edit-mode .d-el {
+  cursor: grab;
+}
+.edit-mode .d-el:hover {
+  outline: 2px dashed rgba(168,96,110,0.55);
+  outline-offset: 3px;
+}
+.edit-mode .d-el.selected {
+  outline: 2px solid #a8606e;
+  outline-offset: 3px;
+  cursor: grabbing;
+  z-index: 30;
+}
+
+/* Resize handle */
+.d-el .rz-handle {
+  display: none;
+  position: absolute;
+  bottom: -7px; right: -7px;
+  width: 16px; height: 16px;
+  background: #a8606e;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  cursor: se-resize;
+  z-index: 5;
+}
+.edit-mode .d-el.selected .rz-handle { display: block; }
+
+/* Rotate handle */
+.d-el .rot-handle {
+  display: none;
+  position: absolute;
+  top: -22px; right: -7px;
+  width: 20px; height: 20px;
+  background: rgba(248,240,224,0.95);
+  border: 1px solid rgba(168,96,110,0.5);
+  border-radius: 50%;
+  cursor: crosshair;
+  z-index: 5;
+  font-size: 0.85rem;
+  color: #a8606e;
+  align-items: center;
+  justify-content: center;
+}
+.edit-mode .d-el.selected .rot-handle { display: flex; }
+
+/* ── Polaroid ── */
+.polaroid {
+  background: #faf6f0;
+  padding: 7px 7px 26px 7px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.28), 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Washi tape */
+.polaroid::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 55%;
+  height: 16px;
+  background: rgba(210,180,140,0.6);
+  border-radius: 2px;
+  z-index: 2;
+}
+
+.polaroid__img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, #d4a76a, #a06830);
+}
+
+.polaroid__img.has-src { background: none; }
+
+.polaroid__caption {
+  position: absolute;
+  bottom: 4px; left: 0; right: 0;
+  text-align: center;
+  font-size: 0.68rem;
+  color: #7a5c42;
+  font-family: 'Caveat', cursive;
+}
+
+/* Upload hint */
+.polaroid__hint {
+  display: none;
+  position: absolute;
+  inset: 7px 7px 26px 7px;
+  background: rgba(245,234,216,0.85);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 0.72rem;
+  color: #8a5a6a;
+  cursor: pointer;
+  z-index: 3;
+  text-align: center;
+  gap: 4px;
+  font-family: 'Caveat', cursive;
+}
+.edit-mode .polaroid .polaroid__hint { display: flex; }
+
+/* ── Note card ── */
+.note-card {
+  background: #f8f0e0;
+  padding: 12px 14px 14px;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.2);
+  clip-path: polygon(
+    0% 6%, 2% 2%, 5% 7%, 7% 1%, 10% 5%, 13% 0%, 16% 4%,
+    19% 1%, 22% 5%, 25% 0%, 28% 4%, 31% 1%, 34% 5%,
+    37% 0%, 40% 3%, 43% 0%, 46% 4%, 49% 1%, 52% 5%,
+    55% 0%, 58% 3%, 61% 0%, 64% 4%, 67% 1%, 70% 5%,
+    73% 0%, 76% 3%, 79% 0%, 82% 4%, 85% 1%, 88% 5%,
+    91% 0%, 94% 3%, 97% 0%, 100% 3%,
+    100% 100%, 0% 100%
+  );
+}
+.note-card--yellow { background: #fdf6d3; }
+.note-card--pink   { background: #fde8ea; }
+
+.note-card__title {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.78rem, 1.4vw, 0.92rem);
+  color: #5a3a20;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(90,58,32,0.3);
+  text-underline-offset: 2px;
+  margin-bottom: 5px;
+}
+.note-card__text {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(0.72rem, 1.3vw, 0.88rem);
+  color: #3a2010;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.note-card__heart {
+  display: block;
+  text-align: center;
+  color: #b07080;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE TURN ANIMATION LAYER
+   A clone of the right-page area flips over the spine
+══════════════════════════════════════════════════════════ */
+.turn-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.turn-layer__flap {
+  position: absolute;
+  top:    5.5%;
+  bottom: 5%;
+  width:  42.5%;  /* half the book width */
+  transform-style: preserve-3d;
+  perspective: 2000px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.turn-layer__front,
+.turn-layer__back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.turn-layer__back {
+  transform: rotateY(180deg);
+}
+
+/* Forward turn — right page flips left over spine */
+.turn-layer__flap.flip-forward {
+  left: 50%;
+  transform-origin: left center;
+  opacity: 1;
+  animation: flipForward 0.65s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@keyframes flipForward {
+  0%   { transform: rotateY(0deg);    filter: brightness(1); }
+  40%  { transform: rotateY(-80deg);  filter: brightness(0.88); }
+  100% { transform: rotateY(-180deg); filter: brightness(1); }
+}
+
+/* Backward turn — left page flips right */
+.turn-layer__flap.flip-backward {
+  right: 50%;
+  left: auto;
+  transform-origin: right center;
+  opacity: 1;
+  animation: flipBackward 0.65s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@keyframes flipBackward {
+  0%   { transform: rotateY(0deg);   filter: brightness(1); }
+  40%  { transform: rotateY(80deg);  filter: brightness(0.88); }
+  100% { transform: rotateY(180deg); filter: brightness(1); }
+}
+
+/* Content crossfade during turn */
+.diary-overlay.fading {
+  animation: contentSwap 0.32s ease forwards;
+}
+@keyframes contentSwap {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAV ARROWS
+══════════════════════════════════════════════════════════ */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(245,234,216,0.82);
+  color: #8a5a6a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.22);
+  transition: background 0.2s, transform 0.2s;
+  backdrop-filter: blur(4px);
+}
+.nav-btn:hover { background: rgba(245,234,216,1); transform: translateY(-50%) scale(1.08); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+.nav-btn:disabled:hover { transform: translateY(-50%) scale(1); background: rgba(245,234,216,0.82); }
+.nav-btn--prev { left: clamp(6px, 1.5vw, 22px); }
+.nav-btn--next { right: clamp(6px, 1.5vw, 22px); }
+
+.page-counter {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Lora', serif;
+  font-size: 0.75rem;
+  color: rgba(245,234,216,0.9);
+  letter-spacing: 0.15em;
+  z-index: 60;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOOLBAR
+══════════════════════════════════════════════════════════ */
+.toolbar {
+  position: absolute;
+  top: 14px; right: 14px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.tbtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border: none;
+  border-radius: 18px;
+  background: rgba(245,234,216,0.88);
+  color: #6b4a32;
+  font-family: 'Lora', serif;
+  font-size: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: background 0.2s, transform 0.15s;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+}
+.tbtn:hover { background: rgba(245,234,216,1); transform: scale(1.03); }
+.tbtn--edit.active { background: #a8606e; color: #fff; }
+.tbtn--save { background: rgba(200,228,200,0.88); }
+
+/* Edit mode outline */
+.edit-mode .diary-bg-photo {
+  outline: 2px solid rgba(168,96,110,0.3);
+}
+
+/* ── Add palette ── */
+.add-palette {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245,234,216,0.92);
+  border-radius: 22px;
+  padding: 7px 16px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+  backdrop-filter: blur(6px);
+}
+.palette-label {
+  font-family: 'Lora', serif;
+  font-size: 0.72rem;
+  color: #8a5a6a;
+}
+.padd-btn {
+  padding: 4px 11px;
+  border: 1px solid rgba(168,96,110,0.3);
+  border-radius: 14px;
+  background: transparent;
+  color: #6b4a32;
+  font-family: 'Caveat', cursive;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.padd-btn:hover { background: rgba(168,96,110,0.12); }
+
+/* ── Element micro-toolbar ── */
+.el-toolbar {
+  position: absolute;
+  z-index: 80;
+  display: flex;
+  gap: 5px;
+  background: rgba(245,234,216,0.95);
+  border-radius: 18px;
+  padding: 4px 9px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  backdrop-filter: blur(6px);
+}
+.el-btn {
+  width: 28px; height: 28px;
+  border: none; border-radius: 50%;
+  background: transparent;
+  color: #6b4a32;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.el-btn:hover { background: rgba(168,96,110,0.15); }
+.el-done { color: #5a8a5a; }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 100;
+  background: rgba(80,130,80,0.92);
+  color: #fff;
+  font-family: 'Caveat', cursive;
+  font-size: 1.05rem;
+  padding: 9px 22px;
+  border-radius: 22px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+══════════════════════════════════════════════════════════ */
+@media (max-width: 680px) {
+  .diary-bg-photo { object-position: center 30%; }
+
+  /* On mobile show one page (right) — easier to read */
+  .diary-overlay {
+    left: 50%; right: 2%;
+    top: 6%; bottom: 6%;
+  }
+  .page-area--left  { display: none; }
+  .page-area--right { width: 100%; padding: 6% 5%; }
+
+  .toolbar { top: 8px; right: 8px; }
+  .tbtn span { display: none; }
+  .tbtn { padding: 8px; border-radius: 50%; }
+  .nav-btn--prev { left: 4px; }
+  .nav-btn--next { right: 4px; }
+}

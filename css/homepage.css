@@ -1,0 +1,517 @@
+﻿/* ============================================================
+   CSS CUSTOM PROPERTIES — Warm Color Palette & Typography
+   Task 2.1: Color palette variables
+   ============================================================ */
+:root {
+  /* Paper tones */
+  --paper-light: #f7ead8;
+  --paper-mid: #ede0c4;
+  --paper-dark: #e5d0aa;
+
+  /* Text colors */
+  --text-primary: #2c221e;
+  --text-meta: #8b6040;
+
+  /* Accent colors */
+  --accent-rose: #a8606e;
+  --accent-pink: #b07080;
+
+  /* Shadow colors */
+  --shadow-xs: rgba(0,0,0,0.08);
+  --shadow-sm: rgba(0,0,0,0.12);
+  --shadow-md: rgba(0,0,0,0.18);
+  --shadow-lg: rgba(0,0,0,0.25);
+
+  /* Scene backgrounds */
+  --scene-dark: #1a0810;
+  --scene-darker: #1f0b0a;
+
+  /* Botanical decoration color */
+  --botanical: rgba(200,150,140,0.5);
+
+  /* Washi tape */
+  --washi: rgba(230,240,255,0.55);
+}
+/* ============================================================
+   HOMEPAGE â€” SABI Living Diary
+   Wooden table scene with closed diary cover
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Lora', Georgia, serif;
+}
+
+/* â”€â”€ Scene container â”€â”€ */
+.homepage-scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #5c3d1e;
+}
+
+/* â”€â”€ Wooden table background â”€â”€
+   Swap to your real cover photo by placing it at assets/images/cover.jpg
+   The background-image line will pick it up automatically.              */
+.table-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('../assets/images/cover.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  /* Warm wooden fallback gradient shown when cover.jpg is not yet placed */
+  background-color: #8B5E3C;
+}
+
+/* When cover.jpg exists, hide the CSS fallback elements so the photo shows cleanly */
+.table-bg[style*="cover.jpg"] ~ .lace-cloth,
+.table-bg[style*="cover.jpg"] ~ .dried-flowers,
+.table-bg[style*="cover.jpg"] ~ .vase,
+.table-bg[style*="cover.jpg"] ~ .cover-polaroid {
+  display: none;
+}
+
+/* â”€â”€ Warm light-ray atmosphere overlay â”€â”€ */
+.light-rays {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 65% 30%,
+    rgba(255, 220, 150, 0.18) 0%,
+    rgba(255, 190, 100, 0.08) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* â”€â”€ Lace cloth â€” top left â”€â”€ */
+.lace-cloth {
+  position: absolute;
+  top: -20px;
+  left: -30px;
+  width: 340px;
+  height: 220px;
+  background: rgba(255, 248, 240, 0.55);
+  border-radius: 0 0 60% 0 / 0 0 40% 0;
+  filter: blur(1px);
+  pointer-events: none;
+  z-index: 4;
+  /* Lace pattern via repeating CSS */
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+  background-size: 12px 12px, 6px 6px;
+  background-position: 0 0, 6px 6px;
+}
+
+/* â”€â”€ Dried flowers â€” right side â”€â”€ */
+.dried-flowers--right {
+  position: absolute;
+  right: 40px;
+  top: 60px;
+  width: 160px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.dried-flowers--right::before,
+.dried-flowers--right::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* Flower stems & blossoms using CSS shapes */
+.dried-flowers--right::before {
+  width: 8px;
+  height: 180px;
+  background: linear-gradient(to bottom, #c4956a, #9b6a3a);
+  left: 60px;
+  top: 80px;
+  border-radius: 4px;
+  transform: rotate(8deg);
+}
+
+.dried-flowers--right::after {
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, #d4a5b5 30%, #c47a90 100%);
+  left: 40px;
+  top: 30px;
+  box-shadow:
+    20px 10px 0 -5px #d4a5b5,
+    -10px 20px 0 -8px #c47a90,
+    10px 30px 0 -6px #e8c5cf,
+    -20px 5px 0 -9px #d4a5b5;
+}
+
+/* â”€â”€ Glass vase â”€â”€ */
+.vase {
+  position: absolute;
+  right: 55px;
+  bottom: 100px;
+  width: 70px;
+  height: 90px;
+  background: linear-gradient(
+    135deg,
+    rgba(200, 230, 240, 0.5) 0%,
+    rgba(180, 220, 235, 0.3) 50%,
+    rgba(160, 200, 220, 0.5) 100%
+  );
+  border-radius: 35% 35% 40% 40% / 10% 10% 40% 40%;
+  border: 1px solid rgba(200, 230, 240, 0.7);
+  z-index: 3;
+}
+
+.vase::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    rgba(200, 230, 240, 0.4),
+    transparent
+  );
+  border-radius: 50% 50% 0 0;
+}
+
+/* â”€â”€ Cover polaroid photo â”€â”€ */
+.cover-polaroid {
+  position: absolute;
+  bottom: 120px;
+  left: 110px;
+  width: 120px;
+  height: 140px;
+  background: #f8f4ee;
+  box-shadow: 3px 4px 12px rgba(0,0,0,0.3);
+  transform: rotate(-6deg);
+  z-index: 3;
+}
+
+.cover-polaroid::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 30px;
+  background: linear-gradient(
+    135deg,
+    #d4a76a 0%,
+    #c4854a 30%,
+    #a06830 60%,
+    #d4a76a 100%
+  );
+  /* Sunset field placeholder */
+  background-image: url('../assets/images/polaroid-cover.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* â”€â”€ THE DIARY COVER â”€â”€ */
+.diary-cover {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  width: min(340px, 42vw);
+  height: min(460px, 58vh);
+  z-index: 10;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  border-radius: 4px 12px 12px 4px;
+}
+
+.diary-cover:hover {
+  transform: translate(-50%, -53%) scale(1.015);
+}
+
+/* Diary cover image â€” shows your real photo when placed at assets/images/cover.jpg */
+.diary-cover__image {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url('../assets/images/cover.jpg');
+  background-size: cover;
+  background-position: center;
+  /* CSS fallback for when image is not yet provided */
+  background-color: #b87a8a;
+  box-shadow:
+    -4px 0 8px rgba(0,0,0,0.4),
+    4px 4px 20px rgba(0,0,0,0.5),
+    inset -3px 0 6px rgba(0,0,0,0.2);
+}
+
+/* CSS fallback diary texture â€” replaces itself when cover.jpg is present */
+.diary-cover__image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    ),
+    linear-gradient(
+      160deg,
+      #c9849a 0%,
+      #b87080 25%,
+      #a8606e 50%,
+      #b87080 75%,
+      #c9849a 100%
+    );
+}
+
+/* Spine left edge */
+.diary-cover__image::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 100%;
+  background: linear-gradient(90deg, #8a4a5a, #a85f70, #8a4a5a);
+  border-radius: 4px 0 0 4px;
+  box-shadow: inset -3px 0 6px rgba(0,0,0,0.3);
+}
+
+/* Cover text (embossed gold style) */
+.diary-cover__text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 30px 30px 30px 50px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.cover-name {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(2.8rem, 6vw, 4.2rem);
+  color: #f0d898;
+  text-shadow:
+    0 1px 3px rgba(0,0,0,0.4),
+    0 0 20px rgba(240, 216, 152, 0.3);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.cover-heart {
+  font-size: 1.1rem;
+  color: #f0d898;
+  opacity: 0.9;
+}
+
+.cover-sub {
+  font-family: 'Caveat', serif;
+  font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+  color: #f0d898;
+  opacity: 0.85;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.cover-year {
+  font-family: 'Patrick Hand', serif;
+  font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+  color: #f0d898;
+  opacity: 0.9;
+  letter-spacing: 0.3em;
+  margin-top: 4px;
+}
+
+.cover-ornament {
+  font-size: 0.7rem;
+  color: #f0d898;
+  opacity: 0.7;
+  letter-spacing: 0.2em;
+}
+
+/* Corner flower decorations */
+/* Task 6.4: Floral ornaments on homepage cover — aged vintage appearance */
+.cover-flower {
+  position: absolute;
+  font-size: 1.6rem;
+  color: #f0d898;
+  opacity: 0.6;
+  filter: drop-shadow(0 1px 3px rgba(80,50,20,0.2)) blur(0.2px);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.cover-flower--tl { top: 16px; left: 30px; transform: rotate(-20deg); font-size: 1.8rem; }
+.cover-flower--tr { top: 16px; right: 12px; transform: rotate(15deg); font-size: 1.4rem; }
+.cover-flower--bl { bottom: 20px; right: 12px; transform: rotate(-10deg); font-size: 1.6rem; }
+
+/* Satin ribbon bookmark */
+.diary-ribbon {
+  position: absolute;
+  bottom: -28px;
+  right: 38px;
+  width: 14px;
+  height: 60px;
+  background: linear-gradient(180deg, #c07890 0%, #a85f75 60%, #8a4a5a 100%);
+  z-index: 11;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+  box-shadow: 1px 2px 6px rgba(0,0,0,0.3);
+}
+
+/* â”€â”€ "open me â™¡" tag â”€â”€ */
+.open-me-tag {
+  position: absolute;
+  bottom: calc(50% - 260px);
+  left: calc(50% - 200px);
+  z-index: 20;
+  cursor: pointer;
+  transform: rotate(-4deg);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  animation: tagFloat 3s ease-in-out infinite;
+}
+
+.open-me-tag:hover {
+  transform: rotate(-2deg) scale(1.06);
+  filter: brightness(1.1);
+  animation-play-state: paused;
+}
+
+.open-me-tag:focus {
+  outline: none;
+}
+
+.open-me-tag__text {
+  display: block;
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+  color: #3d2810;
+  background: #f5ead8;
+  padding: 8px 18px 10px;
+  border-radius: 3px;
+  box-shadow:
+    2px 2px 8px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(0,0,0,0.06);
+  position: relative;
+  /* Torn paper top edge */
+  clip-path: polygon(
+    0% 8%, 3% 4%, 6% 9%, 9% 3%, 12% 7%, 15% 2%, 18% 6%,
+    21% 1%, 24% 5%, 27% 0%, 30% 4%, 33% 1%, 36% 5%,
+    39% 0%, 42% 4%, 45% 1%, 48% 5%, 51% 0%, 54% 3%,
+    57% 0%, 60% 4%, 63% 1%, 66% 5%, 69% 0%, 72% 3%,
+    75% 0%, 78% 4%, 81% 1%, 84% 5%, 87% 0%, 90% 3%,
+    93% 0%, 96% 4%, 100% 1%,
+    100% 100%, 0% 100%
+  );
+}
+
+/* Tiny hole punch for the string */
+.open-me-tag__text::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(61, 40, 16, 0.4);
+  background: rgba(61, 40, 16, 0.08);
+}
+
+/* â”€â”€ Opening overlay â”€â”€ */
+.opening-overlay {
+  position: fixed;
+  inset: 0;
+  background: #f5ead8;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.opening-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.opening-overlay__text {
+  font-family: 'Pinyon Script', cursive;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: #8a5a6a;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+}
+
+.opening-overlay.visible .opening-overlay__text {
+  opacity: 1;
+}
+
+/* â”€â”€ Animations â”€â”€ */
+@keyframes tagFloat {
+  0%, 100% { transform: rotate(-4deg) translateY(0px); }
+  50%       { transform: rotate(-4deg) translateY(-6px); }
+}
+
+/* â”€â”€ Mobile â”€â”€ */
+@media (max-width: 600px) {
+  .diary-cover {
+    width: min(260px, 72vw);
+    height: min(360px, 62vh);
+  }
+
+  .open-me-tag {
+    bottom: calc(50% - 210px);
+    left: calc(50% - 150px);
+  }
+
+  .lace-cloth {
+    width: 200px;
+    height: 140px;
+  }
+
+  .dried-flowers--right {
+    right: 10px;
+    top: 30px;
+    width: 100px;
+  }
+
+  .vase {
+    right: 15px;
+    bottom: 60px;
+    width: 50px;
+    height: 65px;
+  }
+
+  .cover-polaroid {
+    display: none;
+  }
+}
+
+

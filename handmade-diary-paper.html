@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handmade Diary Paper Component</title>
+<style>
+/* ============================================================
+   HANDMADE DIARY PAPER COMPONENT
+   ============================================================ */
+
+.diary-paper-container {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 1.414; /* A4 ratio */
+  margin: 0 auto;
+  position: relative;
+  perspective: 1000px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.diary-paper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: 
+    /* Aged vintage gradient at outer borders */
+    linear-gradient(to right, 
+      #d2bc96 0%, 
+      rgba(210, 188, 150, 0.8) 3%, 
+      rgba(210, 188, 150, 0.4) 8%, 
+      transparent 15%, 
+      transparent 85%, 
+      rgba(210, 188, 150, 0.4) 92%, 
+      rgba(210, 188, 150, 0.8) 97%, 
+      #d2bc96 100%
+    ),
+    linear-gradient(to bottom, 
+      #d2bc96 0%, 
+      rgba(210, 188, 150, 0.6) 2%, 
+      rgba(210, 188, 150, 0.3) 6%, 
+      transparent 12%, 
+      transparent 88%, 
+      rgba(210, 188, 150, 0.3) 94%, 
+      rgba(210, 188, 150, 0.6) 98%, 
+      #d2bc96 100%
+    ),
+    /* Base ivory paper color */
+    #f4efe4;
+  
+  /* Natural rough/deckled torn paper edges */
+  clip-path: polygon(
+    /* Top edge - rough */
+    0% 1%, 2% 0.5%, 4% 1.2%, 7% 0.8%, 10% 1.5%, 15% 0.9%, 20% 1.1%, 
+    25% 0.7%, 30% 1.3%, 35% 0.8%, 40% 1.0%, 45% 0.6%, 50% 1.2%, 
+    55% 0.9%, 60% 1.1%, 65% 0.7%, 70% 1.4%, 75% 0.8%, 80% 1.0%, 
+    85% 0.9%, 90% 1.2%, 93% 0.8%, 96% 1.1%, 98% 0.7%, 100% 1%,
+    
+    /* Right edge - rough */
+    99.2% 3%, 99.5% 7%, 98.8% 12%, 99.3% 18%, 98.9% 24%, 99.1% 30%, 
+    98.7% 36%, 99.4% 42%, 98.8% 48%, 99.2% 54%, 98.9% 60%, 99.3% 66%, 
+    98.6% 72%, 99.1% 78%, 98.8% 84%, 99.2% 90%, 98.9% 95%, 99% 99%,
+    
+    /* Bottom edge - rough */
+    98% 99.3%, 96% 98.7%, 93% 99.2%, 90% 98.8%, 85% 99.1%, 80% 98.9%, 
+    75% 99.2%, 70% 98.6%, 65% 99.3%, 60% 98.9%, 55% 99.1%, 50% 98.8%, 
+    45% 99.4%, 40% 99.0%, 35% 98.2%, 30% 98.7%, 25% 99.3%, 20% 98.9%, 
+    15% 99.1%, 10% 98.5%, 7% 99.2%, 4% 98.8%, 2% 99.5%, 0% 99%,
+    
+    /* Left edge - rough */
+    0.8% 95%, 0.5% 90%, 1.2% 84%, 0.7% 78%, 1.1% 72%, 0.9% 66%, 
+    1.3% 60%, 0.6% 54%, 1.2% 48%, 0.8% 42%, 1.1% 36%, 0.7% 30%, 
+    1.4% 24%, 0.8% 18%, 1.0% 12%, 0.9% 7%, 1.2% 3%
+  );
+  
+  /* Physical depth with layered shadows */
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.08),
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(181, 159, 123, 0.2);
+  
+  border-radius: 2px;
+  overflow: visible;
+}
+
+/* Center spine with soft fold shadow and stitching */
+.diary-paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(181, 159, 123, 0.3) 5%,
+    rgba(181, 159, 123, 0.5) 50%,
+    rgba(181, 159, 123, 0.3) 95%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+  box-shadow: 
+    -1px 0 3px rgba(181, 159, 123, 0.2),
+    1px 0 3px rgba(181, 159, 123, 0.2);
+  z-index: 1;
+}
+
+/* Hand-bound book stitching */
+.diary-paper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 0;
+  border-left: 2px dashed #b59f7b;
+  transform: translateX(-50%);
+  opacity: 0.6;
+  z-index: 2;
+}
+
+/* Corner botanical accents */
+.diary-paper .corner-botanical {
+  position: absolute;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.diary-paper .corner-botanical.top-left {
+  top: 2%;
+  left: 2%;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle at center,
+    rgba(139, 123, 101, 0.4) 0%,
+    rgba(139, 123, 101, 0.2) 40%,
+    transparent 70%
+  );
+  border-radius: 50% 30% 40% 60%;
+  transform: rotate(-15deg);
+}
+
+.diary-paper .corner-botanical.top-right {
+  top: 2%;
+  right: 2%;
+  width: 45px;
+  height: 45px;
+  background: radial-gradient(ellipse at center,
+    rgba(160, 140, 110, 0.4) 0%,
+    rgba(160, 140, 110, 0.2) 50%,
+    transparent 80%
+  );
+  border-radius: 40% 50% 30% 60%;
+  transform: rotate(25deg);
+}
+
+.diary-paper .corner-botanical.bottom-left {
+  bottom: 2%;
+  left: 2%;
+  width: 55px;
+  height: 40px;
+  background: radial-gradient(ellipse at center,
+    rgba(150, 130, 100, 0.4) 0%,
+    rgba(150, 130, 100, 0.2) 45%,
+    transparent 75%
+  );
+  border-radius: 60% 40% 50% 30%;
+  transform: rotate(45deg);
+}
+
+.diary-paper .corner-botanical.bottom-right {
+  bottom: 2%;
+  right: 2%;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle at center,
+    rgba(170, 145, 115, 0.4) 0%,
+    rgba(170, 145, 115, 0.2) 40%,
+    transparent 70%
+  );
+  border-radius: 30% 60% 40% 50%;
+  transform: rotate(-30deg);
+}
+
+/* Content area for overlay readiness */
+.diary-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 8% 12%;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .diary-paper-container {
+    max-width: 90vw;
+    padding: 10px;
+  }
+  
+  .diary-content {
+    padding: 6% 8%;
+  }
+  
+  .diary-paper .corner-botanical {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .diary-paper-container {
+    max-width: 95vw;
+    padding: 5px;
+  }
+  
+  .diary-content {
+    padding: 4% 6%;
+  }
+  
+  .diary-paper .corner-botanical {
+    transform: scale(0.6);
+  }
+}
+
+/* ============================================================
+   DEMO STYLES (Remove these when using the component)
+   ============================================================ */
+body {
+  margin: 0;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #2c1810 0%, #1a0f08 100%);
+  font-family: 'Georgia', serif;
+  min-height: 100vh;
+}
+
+.demo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.demo-title {
+  text-align: center;
+  color: #f4efe4;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.demo-description {
+  text-align: center;
+  color: rgba(244, 239, 228, 0.8);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  line-height: 1.6;
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 3rem;
+  margin-top: 3rem;
+}
+
+.demo-sample h3 {
+  color: #d2bc96;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.demo-sample p {
+  color: rgba(244, 239, 228, 0.7);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Sample content for demonstration */
+.sample-content {
+  font-family: 'Georgia', serif;
+  color: #5a4a38;
+  line-height: 1.8;
+}
+
+.sample-content h2 {
+  color: #8b7b65;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.sample-content p {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+}
+
+.sample-content .date {
+  color: #b59f7b;
+  font-style: italic;
+  text-align: right;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<div class="demo-container">
+  <h1 class="demo-title">Handmade Diary Paper Component</h1>
+  <p class="demo-description">
+    A responsive, reusable HTML/CSS component creating authentic handmade diary paper backgrounds 
+    with natural torn edges, center spine stitching, and botanical corner accents.
+  </p>
+
+  <div class="demo-grid">
+    <!-- Sample 1: Empty paper ready for content -->
+    <div class="demo-sample">
+      <h3>Empty Paper - Ready for Content</h3>
+      <p>Clean paper background with all authentic details</p>
+      
+      <div class="diary-paper-container">
+        <div class="diary-paper">
+          <!-- Corner botanical accents -->
+          <div class="corner-botanical top-left"></div>
+          <div class="corner-botanical top-right"></div>
+          <div class="corner-botanical bottom-left"></div>
+          <div class="corner-botanical bottom-right"></div>
+          
+          <!-- Content area (empty in this example) -->
+          <div class="diary-content">
+            <!-- Your content goes here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sample 2: With sample content -->
+    <div class="demo-sample">
+      <h3>With Sample Content</h3>
+      <p>Demonstrating how text and elements layer over the paper</p>
+      
+      <div class="diary-paper-container">
+        <div class="diary-paper">
+          <!-- Corner botanical accents -->
+          <div class="corner-botanical top-left"></div>
+          <div class="corner-botanical top-right"></div>
+          <div class="corner-botanical bottom-left"></div>
+          <div class="corner-botanical bottom-right"></div>
+          
+          <!-- Content area with sample content -->
+          <div class="diary-content">
+            <div class="sample-content">
+              <h2>Dear Diary</h2>
+              <p>Today was a beautiful autumn day. The leaves are changing colors, painting the world in warm hues of gold and crimson.</p>
+              <p>I walked through the park this morning and collected some pressed flowers for my scrapbook. There's something magical about preserving these small moments in time.</p>
+              <p>The handmade paper feels perfect beneath my pen, with its natural edges and gentle texture reminding me of simpler times.</p>
+              <div class="date">October 3rd, 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usage Instructions -->
+  <div style="margin-top: 4rem; padding: 2rem; background: rgba(244, 239, 228, 0.1); border-radius: 10px;">
+    <h2 style="color: #d2bc96; text-align: center; margin-bottom: 1.5rem;">How to Use This Component</h2>
+    
+    <div style="color: rgba(244, 239, 228, 0.9); line-height: 1.6;">
+      <h3 style="color: #b59f7b; margin-bottom: 1rem;">Basic HTML Structure:</h3>
+      <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 5px; overflow-x: auto; color: #f4efe4;">
+&lt;div class="diary-paper-container"&gt;
+  &lt;div class="diary-paper"&gt;
+    &lt;!-- Corner botanical accents --&gt;
+    &lt;div class="corner-botanical top-left"&gt;&lt;/div&gt;
+    &lt;div class="corner-botanical top-right"&gt;&lt;/div&gt;
+    &lt;div class="corner-botanical bottom-left"&gt;&lt;/div&gt;
+    &lt;div class="corner-botanical bottom-right"&gt;&lt;/div&gt;
+    
+    &lt;!-- Your content goes here --&gt;
+    &lt;div class="diary-content"&gt;
+      &lt;!-- Add your text, images, forms, etc. --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+
+      <h3 style="color: #b59f7b; margin: 2rem 0 1rem;">Key Features:</h3>
+      <ul style="padding-left: 1.5rem;">
+        <li><strong>Responsive:</strong> Automatically adjusts to container width with mobile-optimized breakpoints</li>
+        <li><strong>Natural Edges:</strong> CSS clip-path creates authentic torn paper appearance</li>
+        <li><strong>Center Spine:</strong> Vertical fold shadow with dashed stitching line</li>
+        <li><strong>Botanical Accents:</strong> Faded corner elements for authentic handmade feel</li>
+        <li><strong>Content Ready:</strong> Clear z-index layers for easy content overlay</li>
+        <li><strong>Aged Appearance:</strong> Vintage gradients and ivory base color (#f4efe4)</li>
+      </ul>
+
+      <h3 style="color: #b59f7b; margin: 2rem 0 1rem;">Customization:</h3>
+      <ul style="padding-left: 1.5rem;">
+        <li>Adjust <code>max-width</code> in <code>.diary-paper-container</code> to control size</li>
+        <li>Modify colors in the background gradients for different paper tones</li>
+        <li>Change <code>aspect-ratio</code> for different paper proportions</li>
+        <li>Customize botanical corner positions and styles</li>
+        <li>Adjust padding in <code>.diary-content</code> for content spacing</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

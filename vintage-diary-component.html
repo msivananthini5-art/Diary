@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vintage Handmade Diary Web UI Component</title>
+
+<!-- Google Fonts for Authentic Handwriting Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Dancing+Script:wght@400;500;600;700&family=Sacramento&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   VINTAGE DIARY WEB UI COMPONENT - REUSABLE STYLING
+   ============================================================ */
+
+/* Component Container */
+.diary-ui-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Dark rustic weathered wood texture background */
+  background: 
+    linear-gradient(135deg, #1c1815 0%, #0f0d0a 100%),
+    /* Wood grain texture */
+    url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='woodGrain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='4' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23woodGrain)' opacity='0.3' fill='%232a1f1a'/%3E%3C/svg%3E"),
+    /* Wood surface variations */
+    radial-gradient(ellipse 800px 600px at 30% 40%, rgba(40, 30, 25, 0.6) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 70% 60%, rgba(35, 25, 20, 0.4) 0%, transparent 60%);
+  font-family: 'Caveat', cursive;
+}
+
+/* Book Spread Container */
+.diary-book-spread {
+  position: relative;
+  width: 92%;
+  max-width: 1100px;
+  min-height: 650px;
+  /* Deep 3D book shadow for elevation */
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 15px 35px -8px rgba(0, 0, 0, 0.4),
+    0 8px 20px -5px rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f4efe4;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Paper Design & Texture */
+.diary-paper {
+  position: relative;
+  background:
+    /* Aged brown radial gradients near outer edges */
+    radial-gradient(ellipse 400px 300px at 0% 0%, rgba(217, 203, 178, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 400px 300px at 100% 0%, rgba(217, 203, 178, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 400px 300px at 0% 100%, rgba(217, 203, 178, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 400px 300px at 100% 100%, rgba(217, 203, 178, 0.3) 0%, transparent 60%),
+    /* Paper base tone - warm vintage ivory */
+    #f4efe4;
+  
+  /* Realistic deckled paper edges using irregular clip-path */
+  clip-path: polygon(
+    0% 1.2%, 1.5% 0.8%, 3% 1.5%, 4.5% 0.3%, 6% 1.8%, 8% 0.5%, 10% 1.3%, 12% 0.9%, 
+    15% 1.6%, 18% 0.4%, 22% 1.1%, 25% 0.7%, 30% 1.4%, 35% 0.6%, 40% 1.2%, 45% 0.8%, 
+    50% 1.5%, 55% 0.9%, 60% 1.3%, 65% 0.5%, 70% 1.7%, 75% 0.3%, 80% 1.0%, 85% 0.8%, 
+    88% 1.4%, 92% 0.6%, 95% 1.2%, 97% 0.9%, 100% 1.1%,
+    
+    99.2% 5%, 99.8% 10%, 99.1% 15%, 99.6% 22%, 99.3% 30%, 99.9% 38%, 99.4% 45%, 
+    99.7% 52%, 99.2% 60%, 99.8% 68%, 99.1% 75%, 99.5% 82%, 99.3% 88%, 99.8% 94%, 99.4% 99%,
+    
+    97% 99.1%, 94% 98.8%, 90% 99.4%, 85% 98.9%, 80% 99.3%, 75% 98.6%, 70% 99.2%, 
+    65% 98.8%, 60% 99.5%, 55% 98.7%, 50% 99.1%, 45% 98.9%, 40% 99.4%, 35% 98.5%, 
+    30% 99.2%, 25% 98.8%, 20% 99.3%, 15% 98.6%, 10% 99.1%, 6% 98.9%, 3% 99.4%, 0% 99.2%,
+    
+    0.8% 94%, 0.2% 88%, 0.9% 82%, 0.4% 75%, 0.7% 68%, 0.1% 60%, 0.6% 52%, 
+    0.3% 45%, 0.8% 38%, 0.2% 30%, 0.7% 22%, 0.5% 15%, 0.9% 10%, 0.3% 5%
+  );
+  
+  /* Multi-layered page edges for thickness */
+  box-shadow:
+    inset 0 0 0 2px rgba(240, 235, 220, 0.8),
+    inset 0 0 0 4px rgba(235, 225, 210, 0.6),
+    inset 0 0 80px rgba(210, 190, 160, 0.15);
+}
+
+/* Left Page */
+.diary-page-left {
+  padding: 40px 50px 40px 40px;
+  position: relative;
+}
+
+/* Right Page */
+.diary-page-right {
+  padding: 40px 40px 40px 50px;
+  position: relative;
+  border-left: none;
+}
+
+/* Center Binding Spine */
+.diary-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 8px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(60, 45, 30, 0.4) 20%,
+    rgba(80, 60, 40, 0.6) 50%,
+    rgba(60, 45, 30, 0.4) 80%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  z-index: 5;
+}
+
+/* Hand-stitched binding lines */
+.diary-spine::after {
+  content: '';
+  position: absolute;
+  top: 5%;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 2px dashed #8c6d48;
+  opacity: 0.8;
+}
+
+/* Botanical Corner Accents */
+.botanical-corner {
+  position: absolute;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.botanical-top-left {
+  top: 15px;
+  left: 15px;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at center, rgba(140, 109, 72, 0.6) 0%, rgba(120, 90, 60, 0.4) 40%, transparent 70%);
+  border-radius: 50% 30% 60% 40%;
+  transform: rotate(-15deg);
+}
+
+.botanical-top-right {
+  top: 15px;
+  right: 15px;
+  width: 70px;
+  height: 70px;
+  background: radial-gradient(ellipse at center, rgba(130, 100, 70, 0.5) 0%, rgba(110, 80, 50, 0.3) 50%, transparent 80%);
+  border-radius: 40% 60% 30% 50%;
+  transform: rotate(20deg);
+}
+
+.botanical-bottom-left {
+  bottom: 15px;
+  left: 15px;
+  width: 75px;
+  height: 60px;
+  background: radial-gradient(ellipse at center, rgba(120, 95, 65, 0.5) 0%, rgba(100, 75, 45, 0.3) 45%, transparent 75%);
+  border-radius: 60% 40% 50% 30%;
+  transform: rotate(45deg);
+}
+
+.botanical-bottom-right {
+  bottom: 15px;
+  right: 15px;
+  width: 65px;
+  height: 75px;
+  background: radial-gradient(circle at center, rgba(125, 100, 70, 0.6) 0%, rgba(105, 80, 55, 0.4) 40%, transparent 70%);
+  border-radius: 30% 70% 40% 60%;
+  transform: rotate(-25deg);
+}
+
+/* Typography Styles */
+.diary-date {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #8c6d48;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.diary-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #2c221e;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.diary-text {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #2c221e;
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+  white-space: pre-wrap;
+}
+
+/* Polaroid Photo Styling */
+.polaroid-photo {
+  display: inline-block;
+  background: #ffffff;
+  padding: 8px 8px 25px 8px;
+  margin: 20px 0;
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.2),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  max-width: 200px;
+}
+
+.polaroid-photo.rotate-left {
+  transform: rotate(-2deg);
+}
+
+.polaroid-photo.rotate-right {
+  transform: rotate(2deg);
+}
+
+.polaroid-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: sepia(0.15) contrast(0.95) brightness(1.02);
+}
+
+.polaroid-caption {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'Caveat', cursive;
+  font-size: 1rem;
+  color: #666;
+  padding: 0 8px;
+}
+
+/* Clear tape overlay at corners */
+.polaroid-photo::before,
+.polaroid-photo::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 15px;
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  border: 1px solid rgba(220, 220, 220, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 1px;
+}
+
+.polaroid-photo::before {
+  top: -8px;
+  left: 15px;
+  transform: rotate(-5deg);
+}
+
+.polaroid-photo::after {
+  top: -8px;
+  right: 15px;
+  transform: rotate(5deg);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .diary-book-spread {
+    grid-template-columns: 1fr;
+    min-height: 800px;
+  }
+  
+  .diary-page-left,
+  .diary-page-right {
+    padding: 30px 25px;
+  }
+  
+  .diary-spine {
+    display: none;
+  }
+  
+  .diary-title {
+    font-size: 1.8rem;
+  }
+  
+  .diary-text {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .diary-page-left,
+  .diary-page-right {
+    padding: 20px;
+  }
+  
+  .diary-title {
+    font-size: 1.6rem;
+  }
+  
+  .diary-text {
+    font-size: 1.1rem;
+  }
+}
+
+/* Demo Styles (Remove when using component) */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.demo-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(28, 24, 21, 0.9);
+  color: #f4efe4;
+  padding: 15px;
+  border-radius: 8px;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.9rem;
+  z-index: 1000;
+}
+
+.demo-controls h3 {
+  margin: 0 0 10px 0;
+  color: #8c6d48;
+}
+
+.demo-controls p {
+  margin: 5px 0;
+  opacity: 0.8;
+}
+</style>
+</head>
+<body>
+
+<!-- Demo Controls Panel -->
+<div class="demo-controls">
+  <h3>Vintage Diary Component</h3>
+  <p>✓ Authentic handmade paper</p>
+  <p>✓ Deckled edges & spine</p>
+  <p>✓ Botanical corner accents</p>
+  <p>✓ Polaroid photo styling</p>
+  <p>✓ Handwriting typography</p>
+</div>
+
+<!-- Main Diary UI Component -->
+<div class="diary-ui-wrapper">
+  <div class="diary-book-spread">
+    
+    <!-- Center Spine -->
+    <div class="diary-spine"></div>
+    
+    <!-- Botanical Corner Accents -->
+    <div class="botanical-corner botanical-top-left"></div>
+    <div class="botanical-corner botanical-top-right"></div>
+    <div class="botanical-corner botanical-bottom-left"></div>
+    <div class="botanical-corner botanical-bottom-right"></div>
+    
+    <!-- Left Page -->
+    <div class="diary-paper diary-page-left">
+      <div class="diary-date">October 15th, 2026</div>
+      
+      <h2 class="diary-title">Autumn Memories</h2>
+      
+      <p class="diary-text">Today I walked through the golden leaves that carpet the old stone path. The air carries the scent of woodsmoke and distant rain.</p>
+      
+      <div class="polaroid-photo rotate-left">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80" alt="Autumn scene" onerror="this.src='https://placehold.co/300x200/f4efe4/8c6d48?text=Memory+Photo'">
+        <div class="polaroid-caption">Golden Hour ✨</div>
+      </div>
+      
+      <p class="diary-text">There's something magical about pressing dried flowers between these handmade pages. Each petal holds a whisper of the season.</p>
+    </div>
+    
+    <!-- Right Page -->
+    <div class="diary-paper diary-page-right">
+      <div class="diary-date">Evening Reflections</div>
+      
+      <h2 class="diary-title">Quiet Thoughts</h2>
+      
+      <p class="diary-text">"The beauty of imperfection lies in every torn edge and weathered corner of these beloved pages."</p>
+      
+      <p class="diary-text">Tonight I'll brew chamomile tea and read by candlelight. Simple pleasures that make the heart feel full.</p>
+      
+      <div class="polaroid-photo rotate-right">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=300&q=80" alt="Tea and books" onerror="this.src='https://placehold.co/300x200/f4efe4/8c6d48?text=Cozy+Evening'">
+        <div class="polaroid-caption">Tea & Stories ☕</div>
+      </div>
+      
+      <p class="diary-text">Tomorrow I'll visit the old bookshop downtown. Maybe I'll find another leather-bound journal to fill with dreams.</p>
+    </div>
+    
+  </div>
+</div>
+
+<!-- Usage Instructions -->
+<script>
+/**
+ * VINTAGE DIARY WEB UI COMPONENT - USAGE GUIDE
+ * 
+ * Basic HTML Structure:
+ * <div class="diary-ui-wrapper">
+ *   <div class="diary-book-spread">
+ *     <div class="diary-spine"></div>
+ *     <div class="botanical-corner botanical-top-left"></div>
+ *     <div class="botanical-corner botanical-top-right"></div>
+ *     <div class="botanical-corner botanical-bottom-left"></div>
+ *     <div class="botanical-corner botanical-bottom-right"></div>
+ *     
+ *     <div class="diary-paper diary-page-left">
+ *       <div class="diary-date">Your Date</div>
+ *       <h2 class="diary-title">Your Title</h2>
+ *       <p class="diary-text">Your content...</p>
+ *       <div class="polaroid-photo rotate-left">
+ *         <img src="your-image.jpg" alt="description">
+ *         <div class="polaroid-caption">Photo Caption</div>
+ *       </div>
+ *     </div>
+ *     
+ *     <div class="diary-paper diary-page-right">
+ *       <!-- Right page content -->
+ *     </div>
+ *   </div>
+ * </div>
+ * 
+ * CSS Classes Available:
+ * - .diary-date: For entry dates
+ * - .diary-title: For entry titles  
+ * - .diary-text: For body content
+ * - .polaroid-photo: For photos (add .rotate-left or .rotate-right)
+ * - .polaroid-caption: For photo captions
+ * 
+ * Fonts Required (Google Fonts):
+ * - Caveat (handwriting)
+ * - Dancing Script (titles)
+ * - Crimson Text (dates)
+ */
+</script>
+
+</body>
+</html>

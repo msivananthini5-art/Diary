@@ -1,0 +1,3591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SABI — little things worth remembering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Kalam:wght@300;400;700&family=Caveat:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/supabase-sync.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:'Caveat',cursive}
+
+/* ── SCENE ── */
+.scene{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+
+.table-bg{
+  position:absolute;inset:0;
+  background:
+    /* Dark wooden table base */
+    linear-gradient(135deg, #1f0b0a 0%, #1a0706 100%),
+    /* Wood grain texture */
+    url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='wood'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0.3'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='100%25' height='100%25' filter='url(%23wood)' opacity='0.2'/%3E%3C/svg%3E"),
+    /* Subtle radial depth */
+    radial-gradient(ellipse 80% 70% at 50% 50%, rgba(45,15,20,0.9) 0%, rgba(30,10,15,0.9) 40%, rgba(15,5,8,0.95) 80%, #080208 100%);
+  z-index:0;
+}
+
+.table-bg::before{
+  content:'';position:absolute;inset:0;
+  background:
+    /* Warm ambient light */
+    radial-gradient(ellipse 55% 45% at 50% 52%, rgba(200,100,60,0.18) 0%, rgba(160,60,40,0.09) 40%, transparent 75%),
+    /* Subtle wood texture overlay */
+    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grain' width='4' height='4' patternUnits='userSpaceOnUse'%3E%3Cpath d='M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2' stroke='%23ffffff' stroke-width='0.2' opacity='0.05'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grain)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+.table-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    /* Vignette effect */
+    radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, rgba(5,0,5,0.75) 100%),
+    /* Surface scattering */
+    repeating-linear-gradient(90deg, transparent, transparent 98%, rgba(255,255,255,0.01) 98%, rgba(255,255,255,0.01) 100%);
+  pointer-events:none;
+}
+
+.petals{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;}
+.petal{position:absolute;border-radius:60% 40%;opacity:0;animation:petalFall linear infinite;}
+@keyframes petalFall{0%{transform:translateY(-20px) rotate(0deg) scale(1);opacity:0;}5%{opacity:0.5;}90%{opacity:0.25;}100%{transform:translateY(110vh) rotate(720deg) scale(0.6);opacity:0;}}
+
+/*=============================================================
+  BOOK
+=============================================================*/
+.book{
+  position:relative;z-index:10;
+  width:min(900px, 92vw);
+  height:min(620px, 82vh);
+  perspective:2400px;
+  filter:drop-shadow(0 28px 70px rgba(0,0,0,0.75)) drop-shadow(0 0 40px rgba(120,20,40,0.25));
+  border-radius:8px 12px 12px 8px;
+  overflow:hidden;
+}
+
+.book-base{
+  position:absolute;inset:0;
+  background:linear-gradient(to right,#2a1520 0%,#f2e8da 6%,#f0e4d4 48%,#f0e4d4 52%,#ede0ce 94%,#2a1520 100%);
+  border-radius:8px 12px 12px 8px;
+  box-shadow:inset -2px 0 8px rgba(0,0,0,0.3), inset 2px 0 8px rgba(0,0,0,0.3);
+}
+
+.book-base::after{
+  content:'';position:absolute;top:0;bottom:0;left:calc(50% - 2px);width:4px;
+  background:linear-gradient(90deg,rgba(0,0,0,0.5),rgba(0,0,0,0.25) 50%,rgba(0,0,0,0.5));
+  pointer-events:none;z-index:5;
+}
+
+/* Hand-stitched spine details */
+.spine-stitching{
+  position:absolute;
+  top:50%;
+  left:calc(50% - 1px);
+  width:2px;
+  height:90%;
+  transform:translateY(-50%);
+  z-index:6;
+  pointer-events:none;
+}
+
+.spine-stitch{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:6px;
+  height:8px;
+  background:rgba(180,150,120,0.6);
+  border:1px solid rgba(150,100,70,0.4);
+  border-radius:2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+
+/* Position stitches along the spine */
+.spine-stitch:nth-child(1){top:10%;}
+.spine-stitch:nth-child(2){top:25%;}
+.spine-stitch:nth-child(3){top:40%;}
+.spine-stitch:nth-child(4){top:55%;}
+.spine-stitch:nth-child(5){top:70%;}
+.spine-stitch:nth-child(6){top:85%;}
+
+/*=============================================================
+  SPREAD
+=============================================================*/
+.spread{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:row;
+}
+
+/*=============================================================
+  PAGES - Warm sandalwood cream handmade diary paper
+=============================================================*/
+.page-left, .page-right{
+  flex:1;
+  background:
+    /* Soft highlight — top-left light source, like a lamp beside the diary */
+    radial-gradient(ellipse 55% 35% at 22% 18%, rgba(255,250,238,0.65) 0%, transparent 65%),
+    /* Warm shadow pocket — bottom-right corner aging */
+    radial-gradient(ellipse 45% 45% at 80% 82%, rgba(195,160,110,0.22) 0%, transparent 60%),
+    /* Aged paper stain — faint, top-right corner */
+    radial-gradient(circle 70px at 90% 8%,  rgba(190,155,105,0.13) 0%, transparent 75%),
+    /* Aged paper stain — faint, bottom-left */
+    radial-gradient(circle 90px at 8%  92%, rgba(200,165,115,0.11) 0%, transparent 75%),
+    /* Very fine cross-fiber — diagonal, almost invisible */
+    repeating-linear-gradient(
+      168deg,
+      transparent,
+      transparent 28px,
+      rgba(160,125,80,0.018) 28px,
+      rgba(160,125,80,0.018) 29px
+    ),
+    /* Faint perpendicular fiber */
+    repeating-linear-gradient(
+      78deg,
+      transparent,
+      transparent 36px,
+      rgba(150,115,70,0.012) 36px,
+      rgba(150,115,70,0.012) 37px
+    ),
+    /* Base: warm ivory cream — ivory at top, slightly deeper sandalwood at bottom */
+    linear-gradient(175deg,
+      #faf3e4 0%,
+      #f6edd8 18%,
+      #f2e6ce 38%,
+      #ede0c6 58%,
+      #e9d9bc 78%,
+      #e4d3b4 100%
+    );
+  overflow:hidden;
+  padding:5% 5% 4% 6%;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  cursor:pointer;
+  border-radius:1px 0 0 1px;
+  box-shadow:
+    /* gentle inner shadow on all edges — paper has thickness */
+    inset 0 0  35px rgba(130,90,45,0.08),
+    inset 0 4px 10px rgba(100,65,25,0.05),
+    inset 0 -4px 10px rgba(100,65,25,0.05),
+    inset -3px 0 8px rgba(0,0,0,0.03);
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  hyphens:auto;
+  max-width:100%;
+  min-width:0;
+  
+  /* Organic hand-cut scrapbook paper edges */
+  clip-path: polygon(
+    1% 2%, 3% 0.5%, 5% 1%, 7% 0%, 9% 1.5%, 11% 0.5%, 13% 1%, 15% 0%, 
+    17% 1%, 19% 0.5%, 21% 1.5%, 23% 0%, 25% 1%, 27% 0.5%, 29% 1%, 
+    31% 0%, 33% 1.5%, 35% 0.5%, 37% 1%, 39% 0%, 41% 1%, 43% 0.5%, 
+    45% 1.5%, 47% 0%, 49% 1%, 51% 0.5%, 53% 1%, 55% 0%, 57% 1.5%, 
+    59% 0.5%, 61% 1%, 63% 0%, 65% 1%, 67% 0.5%, 69% 1.5%, 71% 0%, 
+    73% 1%, 75% 0.5%, 77% 1%, 79% 0%, 81% 1.5%, 83% 0.5%, 85% 1%, 
+    87% 0%, 89% 1%, 91% 0.5%, 93% 1.5%, 95% 0%, 97% 1%, 99% 2%,
+    100% 4%, 99.5% 6%, 100% 8%, 99% 10%, 100% 12%, 99.5% 14%, 100% 16%, 
+    99% 18%, 100% 20%, 99.5% 22%, 100% 24%, 99% 26%, 100% 28%, 99.5% 30%, 
+    100% 32%, 99% 34%, 100% 36%, 99.5% 38%, 100% 40%, 99% 42%, 100% 44%, 
+    99.5% 46%, 100% 48%, 99% 50%, 100% 52%, 99.5% 54%, 100% 56%, 99% 58%, 
+    100% 60%, 99.5% 62%, 100% 64%, 99% 66%, 100% 68%, 99.5% 70%, 100% 72%, 
+    99% 74%, 100% 76%, 99.5% 78%, 100% 80%, 99% 82%, 100% 84%, 99.5% 86%, 
+    100% 88%, 99% 90%, 100% 92%, 99.5% 94%, 100% 96%, 99% 98%,
+    97% 99%, 95% 100%, 93% 99.5%, 91% 100%, 89% 99%, 87% 100%, 85% 99.5%, 
+    83% 100%, 81% 99%, 79% 100%, 77% 99.5%, 75% 100%, 73% 99%, 71% 100%, 
+    69% 99.5%, 67% 100%, 65% 99%, 63% 100%, 61% 99.5%, 59% 100%, 57% 99%, 
+    55% 100%, 53% 99.5%, 51% 100%, 49% 99%, 47% 100%, 45% 99.5%, 43% 100%, 
+    41% 99%, 39% 100%, 37% 99.5%, 35% 100%, 33% 99%, 31% 100%, 29% 99.5%, 
+    27% 100%, 25% 99%, 23% 100%, 21% 99.5%, 19% 100%, 17% 99%, 15% 100%, 
+    13% 99.5%, 11% 100%, 9% 99%, 7% 100%, 5% 99.5%, 3% 100%, 1% 98%,
+    0% 96%, 0.5% 94%, 0% 92%, 1% 90%, 0% 88%, 0.5% 86%, 0% 84%, 1% 82%, 
+    0% 80%, 0.5% 78%, 0% 76%, 1% 74%, 0% 72%, 0.5% 70%, 0% 68%, 1% 66%, 
+    0% 64%, 0.5% 62%, 0% 60%, 1% 58%, 0% 56%, 0.5% 54%, 0% 52%, 1% 50%, 
+    0% 48%, 0.5% 46%, 0% 44%, 1% 42%, 0% 40%, 0.5% 38%, 0% 36%, 1% 34%, 
+    0% 32%, 0.5% 30%, 0% 28%, 1% 26%, 0% 24%, 0.5% 22%, 0% 20%, 1% 18%, 
+    0% 16%, 0.5% 14%, 0% 12%, 1% 10%, 0% 8%, 0.5% 6%, 0% 4%
+  );
+  
+  /* Realistic paper shadow - layered drop shadows */
+  filter: 
+    drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1))
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.page-left::before{
+  content:'';
+  position:absolute;
+  top:0; right:0; bottom:0; left:0;
+  background:transparent;
+  /* Right edge = spine fold — thin warm shadow line + gradient shadow */
+  border-right:1px solid rgba(140,100,55,0.18);
+  box-shadow:
+    inset 8px  0  18px rgba(110,70,25,0.07),   /* spine fold shadow */
+    inset 0    8px 14px rgba(90,55,20,0.05),    /* top edge darkening */
+    inset 0   -8px 14px rgba(90,55,20,0.05);    /* bottom edge darkening */
+  pointer-events:none;
+  z-index:3;
+}
+
+/* ── Subtle horizontal ruled diary lines ── */
+.page-left::after,
+.page-right::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  /* Lines every 24px. Warm amber-tan, barely visible.
+     Opacity kept very low so they read as paper texture, not grid lines. */
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent                          0px,
+    transparent                          23px,
+    rgba(148, 112, 68, 0.07)            23px,
+    rgba(148, 112, 68, 0.07)            23.5px,
+    transparent                          23.5px,
+    transparent                          24px
+  );
+  pointer-events:none;
+  z-index:1;
+}
+
+.page-right{
+  border-radius:0 3px 3px 0;
+  transform-style:preserve-3d;
+  transform-origin:0% 50%;
+}
+
+.page-right::before{
+  content:'';
+  position:absolute;
+  top:0; right:0; bottom:0; left:0;
+  box-shadow:
+    inset -6px 0 12px rgba(120,80,40,0.08),
+    inset 8px 0 20px rgba(100,70,30,0.1),
+    inset 0 8px 16px rgba(100,70,30,0.06),
+    inset 0 -8px 16px rgba(100,70,30,0.06);
+  pointer-events:none;
+  z-index:3;
+}
+
+.page-right.flip-forward{animation:flipPageForward 0.65s cubic-bezier(0.4,0,0.2,1) forwards;}
+@keyframes flipPageForward{0%{transform:rotateY(0deg);}100%{transform:rotateY(180deg);}}
+
+.page-right.flip-back{animation:flipPageBack 0.65s cubic-bezier(0.4,0,0.2,1) forwards;}
+@keyframes flipPageBack{0%{transform:rotateY(180deg);}100%{transform:rotateY(0deg);}}
+
+.page-left.flip-backward{animation:flipPageBackward 0.65s cubic-bezier(0.4,0,0.2,1) forwards;}
+@keyframes flipPageBackward{0%{transform:rotateY(-180deg);}100%{transform:rotateY(0deg);}}
+
+/* Mobile page-turn animation: subtle fade for single-paper transitions */
+.page-left.mobile-page-turn{animation:mobilePageTurn 0.7s cubic-bezier(0.4,0,0.2,1) forwards;}
+@keyframes mobilePageTurn{
+  0%{opacity:1;transform:translateX(0) rotateY(0deg) scale(1);}
+  50%{opacity:0.5;transform:translateX(-15px) rotateY(-45deg) scale(0.95);}
+  100%{opacity:0;transform:translateX(-30px) rotateY(-90deg) scale(0.9);}
+}
+
+/*=============================================================
+  PAGE CONTENT — normal flow, fills the padded page area
+=============================================================*/
+.page-content{
+  position:relative;
+  z-index:2;
+  flex:1;          /* fills remaining height of the padded page-left flex column */
+  min-height:0;    /* needed for flex children with overflow */
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── Memory zones ──────────────────────────────────────────
+   Each zone occupies roughly half the page height.
+   overflow:visible so rotated photos don't clip.
+   We use flex so each zone grows to fill its half.
+──────────────────────────────────────────────────────────── */
+.memory-zone{
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:flex-start;
+  overflow:visible;
+  /* Default: first zone starts with generous air at top */
+  padding-top:32px;
+}
+
+/* zone-0: upper memory — anchored top-left with room to breathe */
+.memory-zone.zone-0{
+  padding-left:2%;
+  padding-right:5%;
+  padding-top:32px;
+}
+
+/* zone-1: lower memory — nudged right for natural stagger */
+.memory-zone.zone-1{
+  padding-left:6%;
+  padding-right:1%;
+  padding-top:6px;
+}
+
+/* zone-2: rare third memory — nudge back left */
+.memory-zone.zone-2{
+  padding-left:1%;
+  padding-right:5%;
+  padding-top:4px;
+}
+
+/* Breathing gap between memory zones — visible breathing room */
+.zone-gap{
+  flex:0 0 8%;
+  min-height:20px;
+  background:none;
+}
+
+/* Pattern-b: first memory sits slightly right */
+.page-content.pattern-b .memory-zone.zone-0{ padding-left:6%; padding-right:2%; padding-top:28px; }
+.page-content.pattern-b .memory-zone.zone-1{ padding-left:1%; padding-right:6%; padding-top:6px;  }
+
+/* Pattern-c: more offset for visual variety */
+.page-content.pattern-c .memory-zone.zone-0{ padding-left:1%; padding-right:4%; padding-top:42px; }
+.page-content.pattern-c .memory-zone.zone-1{ padding-left:9%; padding-right:0;  padding-top:4px;  }
+
+/* Single memory per page — wide and centred vertically */
+.page-content.single-memory .memory-zone.zone-0{
+  flex:1;
+  padding-top:44px;
+  padding-left:3%;
+  padding-right:3%;
+}
+
+/*=============================================================
+  MEMORY — text directly on paper, no card/box
+=============================================================*/
+.memory-item{
+  position:relative;
+  width:100%;
+  max-width:100%;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+}
+
+.memory-item:hover .memory-actions{
+  opacity:1;
+}
+
+/* Grid: text left, photo right.
+   Date line ABOVE the grid, spanning full width for natural diary feel. */
+.memory-layout{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  width:100%;
+  max-width:100%;
+}
+
+/* Date sits above everything as a full-width line */
+.memory-date-line{
+  width:100%;
+  margin-bottom:0.3rem;
+}
+
+/* Text + photo sit side-by-side below the date */
+.memory-body{
+  display:grid;
+  grid-template-columns:1fr 140px;
+  gap:0.2rem 1rem;
+  align-items:start;
+  width:100%;
+}
+
+/* No photo → text fills full width */
+.memory-body:not(:has(.memory-photo-wrapper)){
+  display:block;
+}
+
+.memory-text-area{
+  min-width:0;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+}
+
+.memory-date{
+  font-family:'Kalam','Caveat',cursive;
+  font-size:0.72rem;
+  color:#8b6040;
+  font-weight:300;
+  letter-spacing:0.07em;
+  margin-bottom:0.18rem;
+  display:block;
+  text-transform:uppercase;
+  opacity:0.68;
+}
+
+.memory-title{
+  font-family:'Satisfy',cursive;
+  font-size:1.2rem;
+  color:#3d2426;
+  font-weight:400;
+  line-height:1.2;
+  letter-spacing:0.01em;
+  margin-bottom:0.42rem;
+  display:block;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+}
+
+.memory-text{
+  font-family:'Kalam',cursive;
+  font-size:0.95rem;
+  color:#6b4c35;
+  line-height:1.82;
+  letter-spacing:0.02em;
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-weight:300;
+  margin-bottom:0.3rem;
+  display:block;
+  overflow-wrap:break-word;
+}
+
+.memory-notes{
+  font-family:'Kalam',cursive;
+  font-size:0.82rem;
+  color:#7a5540;
+  font-style:italic;
+  font-weight:300;
+  letter-spacing:0.02em;
+  margin-top:0.22rem;
+  line-height:1.65;
+  display:block;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+}
+
+/* ── Polaroid / scrapbook photo card ────────────────────────
+   Sits in column 2 of .memory-body, beside the text block.
+   Extra bottom padding = the polaroid caption strip.
+──────────────────────────────────────────────────────────── */
+.memory-photo-wrapper{
+  flex-shrink:0;
+  position:relative;
+  align-self:start;
+  /* Push photo down to sit beside the title+body, not the tiny date */
+  margin-top:1.6rem;
+
+  /* Physical polaroid card */
+  background:#ffffff;
+  padding:7px 7px 28px 7px;
+  box-shadow:
+    0 7px 18px rgba(0,0,0,0.22),
+    0 2px 5px rgba(0,0,0,0.10),
+    inset 0 0 0 1px rgba(200,190,175,0.3);
+
+  /* Default tilt — overridden inline per slot */
+  transform:rotate(-2.5deg);
+  transition:transform 0.25s ease-out, box-shadow 0.25s ease-out;
+  cursor:default;
+}
+
+.memory-photo-wrapper:hover{
+  transform:rotate(-3.5deg) scale(1.04);
+  box-shadow:
+    0 14px 30px rgba(0,0,0,0.26),
+    0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* Washi / clear tape strip at the top edge of the card */
+.memory-photo-wrapper::before{
+  content:'';
+  position:absolute;
+  top:-9px;
+  left:50%;
+  transform:translateX(-50%) rotate(-1deg);
+  width:52px;
+  height:14px;
+  /* tape: translucent with a faint plaid-like stripe pattern */
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(200,220,255,0.0) 0px,
+      rgba(200,220,255,0.0) 8px,
+      rgba(170,200,240,0.12) 8px,
+      rgba(170,200,240,0.12) 9px
+    ),
+    rgba(230,240,255,0.55);
+  border:0.5px solid rgba(180,200,230,0.4);
+  border-radius:2px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.10);
+  z-index:10;
+}
+
+/* Tiny handwritten caption area on the polaroid bottom strip */
+.memory-photo-wrapper::after{
+  content:'';
+  position:absolute;
+  bottom:4px;
+  left:8px;
+  right:8px;
+  height:2px;
+  border-radius:1px;
+  background:rgba(180,160,140,0.18);
+}
+
+/* The actual photo — uncropped, contained, fills the card face */
+.memory-photo{
+  display:block;
+  width:118px;
+  height:118px;
+  object-fit:cover;
+  object-position:center top;
+  background:#f8f5f0;
+}
+
+.memory-actions{
+  position:absolute;
+  top:0;
+  right:0;
+  display:flex;
+  gap:4px;
+  opacity:0;
+  transition:opacity 0.2s;
+  z-index:20;
+}
+
+.action-btn{
+  width:26px;
+  height:26px;
+  border:none;
+  border-radius:50%;
+  background:rgba(120,40,60,0.88);
+  color:#f8d8d0;
+  font-size:0.75rem;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.2s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+  border:1px solid rgba(180,80,100,0.3);
+}
+
+.action-btn:hover{
+  background:rgba(140,50,70,0.95);
+  transform:scale(1.12);
+}
+
+/*=============================================================
+  PRESSED BOTANICAL / SCRAPBOOK DECORATIONS
+  z-index 2 = same layer as content, pointer-events:none
+  They sit on the page itself via JS appendChild to page-left/right
+=============================================================*/
+.botanical-element{
+  position:absolute;
+  pointer-events:none;
+  z-index:4;   /* above content z-index:2 so they're visible, but low enough */
+  filter:drop-shadow(0 1px 2px rgba(80,50,20,0.18));
+}
+
+/*=============================================================
+  TORN NOTE
+=============================================================*/
+.torn-note{
+  position:relative;
+  padding:0.7rem 0.9rem;
+  background:linear-gradient(135deg, #fef5e7 0%, #faf3e8 100%);
+  border:2px solid rgba(200,180,160,0.4);
+  box-shadow:0 3px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+  font-family:'Indie Flower','Caveat',cursive;
+  font-size:0.9rem;
+  color:#5a1a30;
+  line-height:1.5;
+  max-width:130px;
+  white-space:pre-wrap;
+  word-break:break-word;
+  transform:rotate(2.5deg);
+  font-weight:400;
+  border-radius:2px;
+  margin-top:0.8rem;
+  align-self:flex-start;
+}
+
+.torn-note::before{
+  content:'';
+  position:absolute;
+  top:-12px;
+  left:25%;
+  width:60px;
+  height:14px;
+  background:linear-gradient(90deg, rgba(255,250,220,0.6) 0%, rgba(255,255,240,0.7) 50%, rgba(255,250,220,0.6) 100%);
+  border:1px solid rgba(200,190,160,0.3);
+  box-shadow:0 1px 3px rgba(0,0,0,0.1);
+  z-index:5;
+  border-radius:1px;
+}
+
+/*=============================================================
+  EMPTY STATE
+=============================================================*/
+.empty-state{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:#8b6040;
+  text-align:center;
+  opacity:0.4;
+}
+
+.empty-icon{
+  font-size:4rem;
+  opacity:0.12;
+  margin-bottom:1rem;
+}
+
+/*=============================================================
+  EDIT MODE
+=============================================================*/
+.memory-edit{
+  position:absolute;
+  background:rgba(255,250,240,0.95);
+  border:2px solid rgba(160,100,120,0.4);
+  border-radius:4px;
+  padding:1rem;
+  display:flex;
+  flex-direction:column;
+  gap:0.6rem;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  z-index:30;
+  min-width:280px;
+  backdrop-filter:blur(3px);
+}
+
+.edit-field{
+  display:flex;
+  flex-direction:column;
+  gap:0.3rem;
+}
+
+.edit-field label{
+  font-size:0.75rem;
+  font-weight:700;
+  color:#5a1a30;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.edit-field input,
+.edit-field textarea{
+  padding:0.5rem;
+  border:1px solid #d4c4b4;
+  border-radius:2px;
+  font-family:'Indie Flower','Caveat',cursive;
+  font-size:1rem;
+  background:#ffffff;
+  color:#3a1020;
+}
+
+.edit-field textarea{
+  resize:vertical;
+  min-height:70px;
+}
+
+.edit-actions{
+  display:flex;
+  gap:0.6rem;
+  margin-top:0.4rem;
+}
+
+.edit-actions button{
+  flex:1;
+  padding:0.5rem;
+  border:none;
+  border-radius:2px;
+  font-size:0.85rem;
+  cursor:pointer;
+  font-weight:600;
+  font-family:'Caveat',cursive;
+  transition:all 0.2s;
+}
+
+.btn-save{background:#a8606e;color:#ffffff;}
+.btn-cancel{background:#999999;color:white;}
+.btn-save:hover{background:#b87080;}
+.btn-cancel:hover{background:#aaa;}
+
+/*=============================================================
+  CONTROLS
+=============================================================*/
+.controls{
+  position:absolute;bottom:20px;right:20px;z-index:200;
+  display:flex;gap:12px;align-items:center;
+}
+
+.page-counter{
+  font-family:'Dancing Script',serif;
+  font-size:0.9rem;
+  color:rgba(240,190,180,0.85);
+  letter-spacing:0.12em;
+  font-weight:500;
+}
+
+.btn{
+  width:44px;height:44px;
+  border:none;border-radius:50%;
+  background:rgba(60,15,30,0.85);
+  color:#f0d0c0;
+  font-size:1.2rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+  backdrop-filter:blur(4px);
+  border:1px solid rgba(180,80,100,0.3);
+  box-shadow:0 2px 8px rgba(0,0,0,0.2);
+}
+
+.btn:hover{background:rgba(90,20,40,0.95);transform:scale(1.1);}
+.btn.hidden{display:none;}
+.btn-edit{width:auto;padding:0 14px;font-size:0.95rem;}
+
+.mode-indicator{
+  position:absolute;top:20px;right:20px;z-index:150;
+  padding:0.6rem 1.2rem;
+  background:rgba(60,15,30,0.85);
+  color:#f0d0c0;
+  border-radius:22px;
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  border:1px solid rgba(180,80,100,0.3);
+  font-weight:500;
+}
+
+/*=============================================================
+  MODAL
+=============================================================*/
+.modal{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.85);
+  z-index:1000;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(2px);
+}
+
+.modal.show{display:flex;}
+
+.modal-content{
+  background:linear-gradient(135deg, #fdf8f3 0%, #faf5ed 100%);
+  padding:2.5rem;
+  border-radius:12px;
+  width:min(520px,90vw);
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:0 15px 50px rgba(0,0,0,0.4);
+  border:1px solid rgba(200,180,160,0.3);
+}
+
+.modal-content h2{
+  margin-bottom:2rem;
+  color:#5a1a30;
+  font-family:'Dancing Script',cursive;
+  font-size:2.2rem;
+  font-weight:700;
+}
+
+.modal-field{
+  margin-bottom:1.3rem;
+}
+
+.modal-field label{
+  display:block;
+  font-weight:600;
+  color:#5a1a30;
+  margin-bottom:0.4rem;
+  font-size:0.95rem;
+  font-family:'Caveat',cursive;
+}
+
+.modal-field input,
+.modal-field textarea{
+  width:100%;
+  padding:0.8rem;
+  border:1px solid #d4c4b4;
+  border-radius:4px;
+  font-family:'Indie Flower','Caveat',cursive;
+  font-size:1.05rem;
+  background:#ffffff;
+  color:#3a1020;
+}
+
+.modal-field textarea{
+  resize:vertical;
+  min-height:120px;
+  font-family:'Caveat',cursive;
+}
+
+.modal-actions{
+  display:flex;
+  gap:1.2rem;
+  margin-top:2rem;
+}
+
+.modal-actions button{
+  flex:1;
+  padding:1rem;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:1.1rem;
+  font-weight:600;
+  font-family:'Caveat',cursive;
+  transition:all 0.2s;
+}
+
+.btn-modal-cancel{background:#999999;color:white;}
+.btn-modal-save{background:#a8606e;color:white;}
+.btn-modal-cancel:hover{background:#aaa;}
+.btn-modal-save:hover{background:#b87080;}
+
+@media(max-width:768px), (max-aspect-ratio: 1/1){
+  /* Mobile-first: single-paper view */
+  
+  /* Ensure full viewport is used */
+  body, html {
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+  
+  /* SCENE - match homepage proportions */
+  .scene {
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+  }
+  
+  /* Book container - original size */
+  .book{
+    width:90vw;
+    height:85vh;
+    max-width:80vw;
+    max-height:70vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    border-radius:8px 12px 12px 8px;
+    overflow:hidden;
+  }
+  
+  /* Single page layout */
+  .spread{
+    flex-direction:row;
+    display:flex;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+  
+  /* Show ONLY left page on mobile - FULL SIZE */
+  .page-left{
+    width:100%;
+    height:100%;
+    flex:1;
+    padding:4% 4%;
+    display:flex;
+    flex-direction:column;
+    overflow:visible;
+    position:relative;
+    z-index:10;
+  }
+  
+  /* HIDE right page completely */
+  .page-right{
+    display:none !important;
+    width:0;
+    height:0;
+  }
+  
+  /* Hide spine line */
+  .book-base::after{
+    display:none;
+  }
+  
+  /* Page content - FIT WITHIN PAPER */
+  .page-content{
+    width:100%;
+    height:100%;
+    overflow:visible;
+    flex:1;
+    -webkit-overflow-scrolling:auto;
+  }
+  
+  /* Memory zones - COMPACT */
+  .memory-zone{
+    flex:1;
+    min-height:auto;
+    padding-top:8px;
+    padding-bottom:8px;
+    overflow:visible;
+  }
+  
+  .zone-gap{
+    flex:0 0 4%;
+    overflow:visible;
+  }
+  
+  /* Memory item */
+  .memory-item{
+    width:100%;
+  }
+  
+  /* Memory layout */
+  .memory-body{
+    grid-template-columns:1fr;
+    gap:0.3rem;
+  }
+  
+  .memory-photo-wrapper{
+    width:100px;
+    height:100px;
+    margin-top:0.3rem;
+  }
+  
+  .memory-photo{
+    width:100px;
+    height:100px;
+  }
+  
+  /* Text sizing */
+  .memory-date{
+    font-size:0.65rem;
+    margin-bottom:0.1rem;
+  }
+  
+  .memory-title{
+    font-size:1rem;
+    margin-bottom:0.2rem;
+  }
+  
+  .memory-text{
+    font-size:0.85rem;
+    line-height:1.6;
+    margin-bottom:0.15rem;
+  }
+  
+  .memory-notes{
+    font-size:0.75rem;
+    margin-top:0.1rem;
+  }
+  
+  /* Controls - REPOSITIONED BELOW PAPER */
+  .controls{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    gap:8px;
+    z-index:100;
+  }
+  
+  .btn{
+    width:40px;
+    height:40px;
+    min-width:40px;
+    min-height:40px;
+    font-size:1rem;
+  }
+  
+  .page-counter{
+    font-size:0.75rem;
+    padding:0.3rem 0.6rem;
+  }
+  
+  .btn-edit{
+    padding:0 10px;
+    width:auto;
+    font-size:0.85rem;
+  }
+  
+  /* Mode indicator - REPOSITION */
+  .mode-indicator{
+    position:fixed;
+    top:15px;
+    right:15px;
+    padding:0.4rem 0.8rem;
+    font-size:0.7rem;
+    z-index:150;
+  }
+  
+  /* Action buttons - TOUCH FRIENDLY */
+  .action-btn{
+    width:40px;
+    height:40px;
+    min-width:40px;
+    min-height:40px;
+    font-size:0.9rem;
+  }
+  
+  .memory-actions{
+    opacity:1 !important;
+  }
+  
+  /* Login paper - MATCH BOOK SIZE */
+  .login-paper{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+  }
+  
+  .login-content{
+    padding:6% 5%;
+    gap:1rem;
+  }
+  
+  .login-heading{
+    font-size:1.2rem;
+  }
+  
+  .login-input{
+    font-size:16px;
+    padding:0.25rem 0.05rem;
+  }
+  
+  .login-submit{
+    font-size:0.9rem;
+    padding:0.4rem 1.2rem;
+  }
+  
+  /* Hide login right page on mobile */
+  .login-right-paper{
+    display:none !important;
+  }
+  
+  /* Memory layout on mobile - stack vertically for better readability */
+  .memory-body{
+    grid-template-columns:1fr; /* Stack photo below text on mobile */
+    gap:0.5rem;
+  }
+  
+  .memory-photo-wrapper{
+    margin-top:0.5rem;
+    align-self:center;
+    justify-self:center;
+  }
+  
+  /* Photos - larger on mobile for better visibility */
+  .memory-photo{
+    width:120px;
+    height:120px;
+  }
+  
+  /* Touch-friendly button targets - minimum 44x44px */
+  .btn{
+    min-width:44px;
+    min-height:44px;
+  }
+  
+  .action-btn{
+    min-width:44px;
+    min-height:44px;
+    width:44px;
+    height:44px;
+    font-size:1rem;
+  }
+  
+  /* Always show action buttons on mobile for touch interaction */
+  .memory-item .memory-actions{
+    opacity:1;
+  }
+  
+  /* Compact but still touch-friendly controls */
+  .controls{
+    bottom:15px;
+    right:15px;
+    gap:10px;
+  }
+  
+  .page-counter{
+    font-size:0.85rem;
+    background:rgba(60,15,30,0.75);
+    padding:0.4rem 0.8rem;
+    border-radius:12px;
+    border:1px solid rgba(180,80,100,0.3);
+  }
+  
+  /* Login paper - full viewport on mobile */
+  .login-paper{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  
+  /* Login right paper - never show on mobile */
+  .login-right-paper{
+    display:none !important;
+  }
+  
+  /* Touch-friendly login inputs - prevent iOS zoom */
+  .login-input{
+    font-size:16px; /* Prevents iOS auto-zoom on focus */
+  }
+  
+  /* Login form on mobile - maintain horizontal layout */
+  .login-form {
+    max-width: 100%;
+    gap: 0.8rem;
+  }
+  
+  .login-field {
+    gap: 0.6rem;
+  }
+  
+  .login-label {
+    min-width: 65px;
+    font-size: 0.8rem;
+  }
+  
+  /* Touch-friendly login button - minimum 44x44px */
+  .login-submit{
+    min-width:44px;
+    min-height:44px;
+    padding:0.65rem 1.6rem;
+    font-size:1rem;
+  }
+  
+  /* Torn paper button - mobile sizing */
+  .login-submit-torn {
+    min-width: 100px;
+    min-height: 44px;
+    padding: 0.65rem 1.6rem;
+    font-size: 1.05rem;
+    margin-top: 1rem;
+  }
+  
+  /* Password wrapper on mobile */
+  .login-password-wrapper {
+    gap: 0.3rem;
+    flex: 1;
+  }
+  
+  .login-password-toggle {
+    font-size: 1rem;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Scrapbook sticker on mobile - proportional scaling */
+  .login-sticker-container {
+    padding: 1rem 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .deco-flower {
+    font-size: 0.9rem;
+  }
+  
+  .deco-heart {
+    font-size: 0.75rem;
+  }
+  
+  .deco-sparkle {
+    font-size: 0.7rem;
+  }
+  
+  /* Modal sizing for mobile */
+  .modal-content{
+    width:95vw;
+    padding:1.5rem;
+    max-height:85vh;
+  }
+  
+  /* Larger tap targets in modals */
+  .modal-actions button{
+    min-height:44px;
+    font-size:1rem;
+  }
+  
+  /* Input sizing for mobile - prevent iOS auto-zoom */
+  .modal-field input,
+  .modal-field textarea {
+    font-size: 16px; /* Prevents iOS zoom on input focus */
+    padding: 0.8rem;
+  }
+
+/* ── Memory stickers ── */
+.memory-sticker {
+  position: absolute;
+  font-size: 1.4rem;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  z-index: 8;
+  filter: saturate(0.7) brightness(1.05);
+  transform-origin: center center;
+  transition: filter 0.15s;
+  line-height: 1;
+}
+.memory-sticker:hover { filter: saturate(0.85) brightness(1.08); }
+.memory-sticker:active { cursor: grabbing; }
+.memory-sticker .sticker-delete {
+  display: none;
+  position: absolute;
+  top: -8px; right: -8px;
+  width: 16px; height: 16px;
+  background: rgba(100,20,40,0.8);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.55rem;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9;
+}
+.memory-sticker:hover .sticker-delete { display: flex; }
+
+/* ── Sticker picker in modal / edit form ── */
+.sticker-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.sticker-option {
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, background 0.15s;
+  line-height: 1;
+  filter: saturate(0.75);
+  background: none;
+}
+.sticker-option:hover { background: rgba(160,80,100,0.12); }
+.sticker-option.selected { border-color: rgba(160,80,100,0.7); background: rgba(160,80,100,0.12); }
+
+
+/* Ensure memories can be dragged above animation layers */
+.memory-item, .memory-photo-wrapper {
+  position:relative;
+  z-index:5;
+}
+.memory-item[style*="z-index: 50"], .memory-photo-wrapper[style*="z-index: 50"] {
+  z-index:50 !important;
+}
+/*=============================================================
+  LOGIN PAPER PAGE — appears as a diary spread, feels like entering
+=============================================================*/
+.login-paper { cursor: default; }
+.login-right-paper { 
+  cursor: default;
+  background:
+    radial-gradient(ellipse 55% 35% at 22% 18%, rgba(255,250,238,0.65) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 45% at 80% 82%, rgba(195,160,110,0.22) 0%, transparent 60%),
+    repeating-linear-gradient(to bottom, transparent 0px, transparent 23px, rgba(148, 112, 68, 0.055) 23px, rgba(148, 112, 68, 0.055) 23.5px, transparent 23.5px, transparent 24px),
+    linear-gradient(175deg, #faf3e4 0%, #f6edd8 18%, #f2e6ce 38%, #ede0c6 58%, #e9d9bc 78%, #e4d3b4 100%);
+}
+.login-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 6% 8%;
+  gap: 1.2rem;
+  text-align: left;
+  width: 100%;
+  overflow-y: auto;
+  padding-top: 4%;
+}
+.login-heading-area { 
+  text-align: left;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+/* Scrapbook sticker container */
+.login-sticker-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1rem;
+}
+
+/* Decorative elements */
+.login-decorations-back,
+.login-decorations-front {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.deco-flower {
+  position: absolute;
+  font-size: 1.1rem;
+  color: #D4A5C4;
+  opacity: 0.6;
+  animation: gentleFloat 3s ease-in-out infinite;
+}
+
+.deco-heart {
+  position: absolute;
+  font-size: 0.9rem;
+  color: #E8B4D4;
+  opacity: 0.5;
+  animation: gentleFloat 2.5s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.deco-sparkle {
+  position: absolute;
+  font-size: 0.8rem;
+  opacity: 0.4;
+  animation: sparkleGlow 2s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(2deg); }
+}
+
+@keyframes sparkleGlow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+/* Sticker wrapper with die-cut edges */
+.login-sticker-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)) 
+          drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Die-cut sticker image with irregular organic edges */
+.login-sticker-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  
+  /* Organic die-cut shape - irregular edges following silhouette */
+  clip-path: polygon(
+    2% 4%, 4% 2%, 8% 1%, 12% 0.5%, 16% 0%, 20% 0.5%, 24% 0%, 28% 1%, 
+    32% 0.5%, 36% 1%, 40% 0%, 44% 0.5%, 48% 0%, 52% 1%, 56% 0%, 60% 0.5%, 
+    64% 0%, 68% 1%, 72% 0.5%, 76% 1%, 80% 0%, 84% 1%, 88% 0.5%, 92% 1%, 
+    96% 2%, 98% 4%,
+    99% 8%, 100% 12%, 99.5% 16%, 100% 20%, 99% 24%, 100% 28%, 99.5% 32%, 
+    100% 36%, 99% 40%, 100% 44%, 99.5% 48%, 100% 52%, 99% 56%, 100% 60%, 
+    99.5% 64%, 100% 68%, 99% 72%, 100% 76%, 99.5% 80%, 100% 84%, 99% 88%, 
+    98% 92%, 96% 96%, 
+    92% 99%, 88% 99.5%, 84% 100%, 80% 99%, 76% 100%, 72% 99.5%, 68% 100%, 
+    64% 99%, 60% 100%, 56% 99.5%, 52% 100%, 48% 99%, 44% 100%, 40% 99.5%, 
+    36% 100%, 32% 99%, 28% 100%, 24% 99.5%, 20% 100%, 16% 99%, 12% 100%, 
+    8% 99%, 4% 98%, 
+    1% 96%, 0.5% 92%, 0% 88%, 1% 84%, 0% 80%, 0.5% 76%, 0% 72%, 1% 68%, 
+    0% 64%, 0.5% 60%, 0% 56%, 1% 52%, 0% 48%, 0.5% 44%, 0% 40%, 1% 36%, 
+    0% 32%, 0.5% 28%, 0% 24%, 1% 20%, 0% 16%, 1% 12%, 2% 8%
+  );
+  
+  /* Thin warm-white sticker border */
+  background: linear-gradient(135deg, #FFFEF9 0%, #FFF9F0 100%);
+  padding: 3px;
+  border-radius: 2px;
+}
+
+/* Sticker paper texture overlay */
+.login-sticker-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+/* Realistic paper shadow underneath sticker */
+.login-sticker-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: radial-gradient(
+    ellipse 80% 40% at 50% 100%, 
+    rgba(120, 80, 50, 0.25) 0%, 
+    rgba(120, 80, 50, 0.15) 30%, 
+    transparent 70%
+  );
+  z-index: -1;
+  filter: blur(4px);
+  transform: translateY(4px);
+  pointer-events: none;
+}
+
+.login-heading {
+  display: block;
+  font-family: 'Satisfy', cursive;
+  font-size: 1.45rem;
+  color: #3d2426;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.3rem;
+}
+.login-subheading {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 0.82rem;
+  color: #8b6040;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+}
+.login-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  text-align: left;
+}
+.login-field {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.8rem;
+  text-align: left;
+  width: 100%;
+}
+.login-label {
+  font-family: 'Kalam', cursive;
+  font-size: 0.85rem;
+  color: #8b6040;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-align: left;
+  min-width: 70px;
+  flex-shrink: 0;
+  padding-bottom: 0.3rem;
+}
+.login-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #7a5540;
+  border-radius: 0;
+  outline: none;
+  font-family: 'Kalam', cursive;
+  font-size: 1.05rem;
+  color: #5a3a2a;
+  padding: 0.5rem 0 0.3rem 0;
+  flex: 1;
+  box-shadow: none;
+  transition: border-color 0.2s, padding 0.2s;
+  text-align: left;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.login-input:focus {
+  border-bottom-color: #8c4a6a;
+  padding-bottom: 0.2rem;
+  outline: none;
+}
+.login-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+  gap: 0.4rem;
+}
+
+.login-password-wrapper .login-input {
+  flex: 1;
+}
+
+.login-password-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.2rem 0.3rem 0.1rem 0;
+  color: #7a5540;
+  transition: opacity 0.2s;
+  padding-bottom: 0.3rem;
+}
+
+.login-password-toggle:hover {
+  opacity: 0.7;
+}
+
+.login-password-toggle:focus {
+  outline: none;
+}
+
+.login-submit {
+  align-self: flex-start;
+  margin-top: 0.8rem;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0.5rem 0;
+  font-family: 'Satisfy', cursive;
+  font-size: 0.95rem;
+  color: #3d2426;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.2s, box-shadow 0.2s;
+  transform: none;
+}
+
+.login-submit:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.login-submit-torn {
+  align-self: flex-start;
+  margin-top: 1.2rem;
+  background: linear-gradient(135deg, #F5B8D4 0%, #E8B4D4 100%);
+  border: none;
+  border-radius: 0;
+  padding: 0.6rem 1.4rem;
+  font-family: 'Satisfy', cursive;
+  font-size: 1.1rem;
+  color: #5a3a2a;
+  cursor: pointer;
+  box-shadow: 
+    0 3px 8px rgba(200, 120, 150, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  
+  /* Torn paper effect via irregular border */
+  clip-path: polygon(
+    0% 0%, 
+    2% 1%, 
+    4% 0%, 
+    6% 2%, 
+    8% 1%, 
+    10% 0%, 
+    12% 1%, 
+    14% 0%, 
+    16% 2%, 
+    18% 1%, 
+    20% 0%, 
+    22% 1%, 
+    24% 2%, 
+    26% 0%, 
+    28% 1%, 
+    30% 0%, 
+    32% 2%, 
+    34% 0%, 
+    36% 1%, 
+    38% 0%, 
+    40% 2%, 
+    42% 0%, 
+    44% 1%, 
+    46% 0%, 
+    48% 2%, 
+    50% 0%, 
+    52% 1%, 
+    54% 0%, 
+    56% 2%, 
+    58% 0%, 
+    60% 1%, 
+    62% 0%, 
+    64% 2%, 
+    66% 1%, 
+    68% 0%, 
+    70% 2%, 
+    72% 0%, 
+    74% 1%, 
+    76% 0%, 
+    78% 2%, 
+    80% 0%, 
+    82% 1%, 
+    84% 0%, 
+    86% 2%, 
+    88% 0%, 
+    90% 1%, 
+    92% 0%, 
+    94% 2%, 
+    96% 0%, 
+    98% 1%, 
+    100% 0%,
+    100% 2%,
+    98% 3%,
+    96% 4%,
+    94% 3%,
+    92% 4%,
+    90% 3%,
+    88% 4%,
+    86% 3%,
+    84% 4%,
+    82% 3%,
+    80% 4%,
+    78% 3%,
+    76% 4%,
+    74% 3%,
+    72% 4%,
+    70% 3%,
+    68% 4%,
+    66% 3%,
+    64% 4%,
+    62% 3%,
+    60% 4%,
+    58% 3%,
+    56% 4%,
+    54% 3%,
+    52% 4%,
+    50% 3%,
+    48% 4%,
+    46% 3%,
+    44% 4%,
+    42% 3%,
+    40% 4%,
+    38% 3%,
+    36% 4%,
+    34% 3%,
+    32% 4%,
+    30% 3%,
+    28% 4%,
+    26% 3%,
+    24% 4%,
+    22% 3%,
+    20% 4%,
+    18% 3%,
+    16% 4%,
+    14% 3%,
+    12% 4%,
+    10% 3%,
+    8% 4%,
+    6% 3%,
+    4% 4%,
+    2% 3%,
+    0% 4%
+  );
+}
+
+.login-submit-torn:hover {
+  background: linear-gradient(135deg, #F5C8E0 0%, #E8BDD8 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 5px 12px rgba(200, 120, 150, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.login-submit-torn:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(200, 120, 150, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn-hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.login-btn-visible {
+  display: block;
+  opacity: 1;
+  animation: fadeInButton 0.3s ease-in-out;
+}
+
+@keyframes fadeInButton {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-error {
+  font-family: 'Kalam', cursive;
+  font-size: 0.78rem;
+  color: #b03030;
+  text-align: center;
+  min-height: 1rem;
+  display: none;
+}
+.login-error.visible {
+  display: block;
+}
+/* Decorative right page of login spread */
+.login-right-paper { cursor: default; }
+.login-right-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.6rem;
+  text-align: center;
+  opacity: 0.65;
+}
+.login-right-date {
+  font-family: 'Kalam', cursive;
+  font-size: 0.7rem;
+  color: #8b6040;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+.login-right-title {
+  font-family: 'Satisfy', cursive;
+  font-size: 2.2rem;
+  color: #3d2426;
+  letter-spacing: 0.08em;
+}
+.login-right-sub {
+  font-family: 'Kalam', cursive;
+  font-size: 0.82rem;
+  color: #8b6040;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.6;
+}
+/* Login page transition out */
+.login-page-exit {
+  animation: loginPageFlip 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes loginPageFlip {
+  0%   { transform: rotateY(0deg); opacity: 1; }
+  100% { transform: rotateY(-180deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene">
+  <div class="table-bg"></div>
+  <div class="petals" id="petals"></div>
+
+  <div class="book" id="book">
+    <div class="book-base"></div>
+    <div class="spine-stitching" id="spine-stitching"></div>
+    <div class="spread" id="current-spread"><!-- JS --></div>
+  </div>
+
+  <div class="mode-indicator" id="mode-indicator">EDIT MODE</div>
+  <div class="controls">
+    <span class="page-counter"><span id="spread-num">1</span> / <span id="spread-total">1</span></span>
+    <button class="btn btn-edit" id="btn-add">✨ Add</button>
+    <button class="btn" id="btn-logout" title="Logout">🚪</button>
+    <a class="btn" href="index.html">🏠</a>
+  </div>
+</div>
+
+<div id="add-modal" class="modal">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <h2>✨ New Memory</h2>
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="add-date">
+    </div>
+    <div class="modal-field">
+      <label>Time</label>
+      <input type="time" id="add-time">
+    </div>
+    <div class="modal-field">
+      <label>Title</label>
+      <input type="text" id="add-title" placeholder="Memory title">
+    </div>
+    <div class="modal-field">
+      <label>Your memory</label>
+      <textarea id="add-text" placeholder="Write your memory..."></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Photo (optional)</label>
+      <input type="file" id="add-photo" accept="image/*">
+      <div id="add-photo-preview" style="margin-top:0.8rem;"></div>
+    </div>
+    <div class="modal-field">
+      <label>Small note (optional)</label>
+      <input type="text" id="add-notes" placeholder="A special note...">
+    </div>
+    <div class="modal-field" id="add-sticker-field">
+      <label>Add Sticker (optional)</label>
+      <div class="sticker-picker-row" id="add-sticker-picker">
+        <!-- populated by JS -->
+      </div>
+      <small style="color:#8b6040;font-size:0.78rem;margin-top:4px;display:block;">Click to select, click again to deselect</small>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-modal-save" onclick="submitAddMemory()">Add Memory</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="js/storage.js"></script>
+<script>
+let DIARY_MODE = 'editor';
+let isAnimating = false;
+let isLoggedIn = false; // Gate: prevent renderSpread() until login succeeds
+
+// Mobile state and helpers
+let mobileCurrentPaperIndex = 0;
+let isDraggingContent = false;
+let isUserSwiping = false;
+let swipeStartX = 0;
+let wasMobile = false;
+
+function isMobile() {
+  // Check actual viewport width from meta viewport
+  const isTouchDevice = () => {
+    return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+  };
+  
+  // Force single-paper mode if touch device OR viewport width <= 768px
+  return isTouchDevice() || window.innerWidth <= 768;
+}
+
+const STICKERS = [
+  { label: 'Purple Flower', emoji: '🌸' },
+  { label: 'Lavender',      emoji: '💜' },
+  { label: 'Leaf',          emoji: '🍃' },
+  { label: 'Heart',         emoji: '🤍' },
+  { label: 'Star',          emoji: '⭐' },
+  { label: 'Butterfly',     emoji: '🦋' },
+  { label: 'Branch',        emoji: '🌿' },
+  { label: 'Daisy',         emoji: '🌼' },
+  { label: 'Small Heart',   emoji: '🩷' },
+];
+
+function setDiaryMode(mode) {
+  DIARY_MODE = mode;
+  const indicator = document.getElementById('mode-indicator');
+  if (indicator) {
+    indicator.textContent = mode === 'editor' ? 'EDIT MODE' : 'VIEWER MODE';
+    indicator.style.background = mode === 'editor' ? 'rgba(60,15,30,0.85)' : 'rgba(100,100,100,0.85)';
+  }
+  updateUIVisibility();
+}
+
+function updateUIVisibility() {
+  const addBtn = document.getElementById('btn-add');
+  const actions = document.querySelectorAll('.memory-actions');
+  
+  if (DIARY_MODE === 'viewer') {
+    addBtn.classList.add('hidden');
+    actions.forEach(a => a.style.display = 'none');
+  } else {
+    addBtn.classList.remove('hidden');
+  }
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('mode') === 'viewer') {
+  setDiaryMode('viewer');
+}
+
+const DiaryState = {
+  spreads: [],
+  currentSpreadIndex: 0,
+  
+  init() {
+    const saved = DiaryStorage.load();
+    if (saved && saved.spreads && saved.spreads.length > 0) {
+      this.spreads = saved.spreads;
+    } else {
+      this.spreads = [{spreadNum: 1, leftMemories: [], rightMemories: []}];
+    }
+    this.currentSpreadIndex = 0;
+    
+    // ENSURE AT LEAST 10 SPREADS
+    while (this.spreads.length < 10) {
+      const nextNum = this.spreads[this.spreads.length - 1].spreadNum + 1;
+      this.spreads.push({
+        spreadNum: nextNum,
+        leftMemories: [],
+        rightMemories: []
+      });
+    }
+    
+    // Migration: ensure all existing memories have a stickers array
+    this.spreads.forEach(sp => {
+      [...(sp.leftMemories || []), ...(sp.rightMemories || [])].forEach(m => {
+        m.stickers = m.stickers || [];
+      });
+    });
+  },
+  
+  getCurrentSpread() {
+    return this.spreads[this.currentSpreadIndex] || null;
+  },
+  
+  addMemory(memory) {
+    // Mobile: treat each physical paper as max 3 memories (not split left/right)
+    // Desktop: still uses left/right pages separately
+    
+    if (isMobile()) {
+      // MOBILE: Place on physical papers (3 memories per paper max)
+      const MAX_MEMORIES_PER_PAPER = 3;
+      
+      // Assign memory ID and stickers array
+      memory.id = 'mem_' + Date.now();
+      memory.stickers = memory.stickers || [];
+      
+      // Calculate estimated memory size
+      const estSize = this.estimateMemorySize(memory);
+      
+      // Start from current spread's current side, as a single paper
+      const currentPaper = Math.floor(mobileCurrentPaperIndex); // Round down to get paper index
+      const startSpreadIdx = Math.floor(currentPaper / 2);
+      const startSide = (currentPaper % 2 === 0) ? 'left' : 'right';
+      
+      // Try to fit in current spread on current side
+      let spreadIdx = startSpreadIdx;
+      let side = startSide;
+      
+      // Search through papers for one with space
+      while (spreadIdx < this.spreads.length) {
+        const spread = this.spreads[spreadIdx];
+        if (!spread) break;
+        
+        // Count memories on this physical paper
+        const sideMemories = side === 'left' ? spread.leftMemories : spread.rightMemories;
+        const totalOnPaper = sideMemories.length;
+        
+        // Check if this paper has room
+        if (totalOnPaper < MAX_MEMORIES_PER_PAPER && this.hasSpaceForMemory(sideMemories, estSize)) {
+          // Add to this paper
+          if (side === 'left') {
+            spread.leftMemories.push(memory);
+          } else {
+            spread.rightMemories.push(memory);
+          }
+          this.save();
+          return;
+        }
+        
+        // Move to next paper (next side if exists, or next spread)
+        if (side === 'left') {
+          side = 'right';
+        } else {
+          spreadIdx++;
+          side = 'left';
+        }
+      }
+      
+      // No space found, create new spread
+      const newSpread = {
+        spreadNum: this.spreads[this.spreads.length - 1].spreadNum + 1,
+        leftMemories: [memory],
+        rightMemories: []
+      };
+      this.spreads.push(newSpread);
+      this.save();
+    } else {
+      // DESKTOP: Original left/right logic
+      const MAX_PER_SIDE = 2;
+      const spread = this.getCurrentSpread();
+      if (!spread) return;
+      
+      memory.id = 'mem_' + Date.now();
+      memory.stickers = memory.stickers || [];
+      
+      if (spread.leftMemories.length < MAX_PER_SIDE) {
+        spread.leftMemories.push(memory);
+      } else if (spread.rightMemories.length < MAX_PER_SIDE) {
+        spread.rightMemories.push(memory);
+      } else {
+        const newSpread = {
+          spreadNum: this.spreads[this.spreads.length - 1].spreadNum + 1,
+          leftMemories: [memory],
+          rightMemories: []
+        };
+        this.spreads.push(newSpread);
+        this.currentSpreadIndex++;
+      }
+      this.save();
+    }
+  },
+  
+  // Estimate memory size for space calculation
+  estimateMemorySize(memory) {
+    let size = 80; // base size in units
+    if (memory.title) size += memory.title.length * 2;
+    if (memory.text) size += memory.text.length * 1.5;
+    if (memory.photo) size += 150; // photos take significant space
+    if (memory.notes) size += memory.notes.length;
+    if (memory.stickers && memory.stickers.length) size += 20 * memory.stickers.length;
+    return size;
+  },
+  
+  // Check if there's visual space for another memory
+  hasSpaceForMemory(existingMemories, estSize) {
+    // Simple heuristic: if fewer than 2 memories exist, usually space
+    if (existingMemories.length < 2) return true;
+    // If 2 exist, check combined size (rough estimate)
+    const totalSize = existingMemories.reduce((sum, m) => sum + this.estimateMemorySize(m), 0) + estSize;
+    const maxSpaceOnPaper = 500; // arbitrary units for available paper space on mobile
+    return totalSize < maxSpaceOnPaper;
+  },
+  
+  editMemory(memoryId, updates) {
+    const spread = this.getCurrentSpread();
+    if (!spread) return;
+    
+    let memory = spread.leftMemories.find(m => m.id === memoryId);
+    if (!memory) memory = spread.rightMemories.find(m => m.id === memoryId);
+    
+    if (memory) {
+      Object.assign(memory, updates);
+      this.save();
+    }
+  },
+  
+  deleteMemory(memoryId) {
+    const spread = this.getCurrentSpread();
+    if (!spread) return;
+    
+    spread.leftMemories = spread.leftMemories.filter(m => m.id !== memoryId);
+    spread.rightMemories = spread.rightMemories.filter(m => m.id !== memoryId);
+    this.save();
+  },
+  
+  nextSpread() {
+    if (this.currentSpreadIndex < this.spreads.length - 1) {
+      this.currentSpreadIndex++;
+    } else {
+      const newSpread = {
+        spreadNum: this.spreads[this.spreads.length - 1].spreadNum + 1,
+        leftMemories: [],
+        rightMemories: []
+      };
+      this.spreads.push(newSpread);
+      this.currentSpreadIndex++;
+    }
+    this.save();
+  },
+  
+  prevSpread() {
+    if (this.currentSpreadIndex > 0) {
+      this.currentSpreadIndex--;
+      this.save();
+    }
+  },
+  
+  save() {
+    DiaryStorage.save(this);
+  }
+};
+
+DiaryState.init();
+
+// ── SHOW LOGIN FIRST (gate to diary) ──
+// Always show login screen initially to identify user (admin/owner or viewer)
+// This ensures access control and role-based features work correctly
+
+const _supabaseReady = typeof SupabaseSync !== 'undefined' && SupabaseSync.isConfigured();
+
+console.log('_supabaseReady:', _supabaseReady);
+console.log('SupabaseSync:', typeof SupabaseSync);
+
+// After user logs in (via handleLogin), fetch session and diary data
+async function initDiaryAfterLogin() {
+  if (_supabaseReady) {
+    try {
+      const session = await SupabaseSync.getSession();
+      console.log('Session check result:', session);
+      
+      if (session) {
+        console.log('Authenticated — pulling diary data...');
+        const role = await SupabaseSync.getRole();
+        setDiaryMode(role === 'owner' ? 'editor' : 'viewer');
+        await SupabaseSync.pull();
+        
+        // ENSURE AT LEAST 10 SPREADS AFTER PULL
+        while (DiaryState.spreads.length < 10) {
+          const nextNum = DiaryState.spreads[DiaryState.spreads.length - 1].spreadNum + 1;
+          DiaryState.spreads.push({
+            spreadNum: nextNum,
+            leftMemories: [],
+            rightMemories: []
+          });
+        }
+        DiaryState.save();
+        
+        isLoggedIn = true; // CRITICAL: Allow renderSpread() to work
+        if (typeof renderSpread === 'function') renderSpread();
+      }
+    } catch (err) {
+      console.error('Error initializing diary after login:', err);
+      showLoginSpread();
+    }
+  } else {
+    // No Supabase configured — show diary in local-only mode
+    console.log('Supabase not configured — running in local-only mode');
+    isLoggedIn = true; // Allow renderSpread() in local-only mode
+    if (typeof renderSpread === 'function') renderSpread();
+  }
+}
+
+function handleLeftPageClick(e) {
+  if (DIARY_MODE === 'viewer') {
+    handleLeftPageTurn();
+    return;
+  }
+  const isContent = e.target.closest('.memory-item, .memory-edit, .action-btn, input, textarea, button, .empty-state');
+  if (!isContent) handleLeftPageTurn();
+}
+
+function handleRightPageClick(e) {
+  if (DIARY_MODE === 'viewer') {
+    handleRightPageTurn();
+    return;
+  }
+  const isContent = e.target.closest('.memory-item, .memory-edit, .action-btn, input, textarea, button, .empty-state');
+  if (!isContent) handleRightPageTurn();
+}
+
+function handleLeftPageTurn() {
+  if (isAnimating) return;
+  if (DiaryState.currentSpreadIndex === 0) return;
+  const leftPage = document.querySelector('.page-left');
+  if (!leftPage) return;
+  isAnimating = true;
+  leftPage.classList.add('flip-backward');
+  setTimeout(() => {
+    DiaryState.prevSpread();
+    renderSpread();
+    isAnimating = false;
+  }, 680);
+}
+
+function handleRightPageTurn() {
+  if (isAnimating) return;
+  const rightPage = document.querySelector('.page-right');
+  if (!rightPage) return;
+  isAnimating = true;
+  rightPage.classList.add('flip-forward');
+  setTimeout(() => {
+    DiaryState.nextSpread();
+    renderSpread();
+    isAnimating = false;
+  }, 680);
+}
+
+// Rotate through 3 layout patterns based on spread number + side
+function getPatternClass(spreadNum, side) {
+  const patterns = ['pattern-a', 'pattern-b', 'pattern-c'];
+  const base = (spreadNum - 1) * 2 + (side === 'right' ? 1 : 0);
+  return patterns[base % patterns.length];
+}
+
+function renderPageMemories(memories, pattern) {
+  if (memories.length === 0) {
+    return `<div class="empty-state"><div class="empty-icon">✨</div></div>`;
+  }
+  const singleClass = memories.length === 1 ? ' single-memory' : '';
+  let html = `<div class="page-content ${pattern}${singleClass}">`;
+  memories.forEach((mem, idx) => {
+    html += `<div class="memory-zone zone-${idx}">`;
+    html += renderMemoryItem(mem, idx);
+    html += `</div>`;
+    // Insert a natural gap between memories
+    if (idx < memories.length - 1) {
+      html += `<div class="zone-gap"></div>`;
+    }
+  });
+  html += `</div>`;
+  return html;
+}
+
+function renderSpread() {
+  // Mobile: render single paper
+  const mobile = isMobile();
+  console.log('renderSpread - isMobile:', mobile, 'window.innerWidth:', window.innerWidth);
+  
+  if (mobile) {
+    console.log('Calling renderSinglePaper instead');
+    renderSinglePaper(mobileCurrentPaperIndex);
+    return;
+  }
+  
+  // Desktop: existing two-page spread rendering
+  const spread = DiaryState.getCurrentSpread();
+  if (!spread) return;
+  
+  const spreadEl = document.getElementById('current-spread');
+  
+  const leftPattern = getPatternClass(spread.spreadNum, 'left');
+  const rightPattern = getPatternClass(spread.spreadNum, 'right');
+
+  let html = `<div class="page-left">`;
+  html += renderPageMemories(spread.leftMemories, leftPattern);
+  html += `</div><div class="page-right">`;
+  html += renderPageMemories(spread.rightMemories, rightPattern);
+  html += `</div>`;
+  
+  spreadEl.innerHTML = html;
+  
+  const leftPage = spreadEl.querySelector('.page-left');
+  const rightPage = spreadEl.querySelector('.page-right');
+  
+  if (leftPage) leftPage.addEventListener('click', handleLeftPageClick);
+  if (rightPage) rightPage.addEventListener('click', handleRightPageClick);
+  
+  spreadEl.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const memId = btn.dataset.memoryId;
+      const action = btn.dataset.action;
+      
+      if (action === 'edit') startEditMemory(memId);
+      else if (action === 'delete') {
+        if (confirm('Delete this memory?')) {
+          DiaryState.deleteMemory(memId);
+          // Sync delete to Supabase
+          if (typeof SupabaseSync !== 'undefined') SupabaseSync.deleteMemory(memId);
+          renderSpread();
+        }
+      }
+    });
+  });
+  
+  document.getElementById('spread-num').textContent = spread.spreadNum;
+  document.getElementById('spread-total').textContent = DiaryState.spreads.length;
+  updateUIVisibility();
+  
+  // Add botanical elements to new pages
+  setTimeout(addBotanicalElements, 50);
+  // Apply any saved drag offsets, then wire up drag handlers
+  setTimeout(() => { applyOffsets(); attachDragHandlers(); renderStickers(); attachStickerDragHandlers(); }, 80);
+}
+
+// Mobile: render a single paper by index
+function renderSinglePaper(paperIndex) {
+  const totalPapers = DiaryState.spreads.length * 2;
+  
+  // Clamp paperIndex
+  if (paperIndex < 0) paperIndex = 0;
+  if (paperIndex >= totalPapers) paperIndex = totalPapers - 1;
+  
+  mobileCurrentPaperIndex = paperIndex;
+  
+  // Map paperIndex to spread and side
+  // Paper 0,1 = spread 0 (left, right)
+  // Paper 2,3 = spread 1 (left, right)
+  const spreadIndex = Math.floor(paperIndex / 2);
+  const side = (paperIndex % 2 === 0) ? 'left' : 'right';
+  
+  // SYNC DiaryState.currentSpreadIndex with the displayed spread
+  DiaryState.currentSpreadIndex = spreadIndex;
+  
+  const spread = DiaryState.spreads[spreadIndex];
+  if (!spread) return;
+  
+  const memories = side === 'left' ? spread.leftMemories : spread.rightMemories;
+  const pattern = getPatternClass(spread.spreadNum, side);
+  
+  const spreadEl = document.getElementById('current-spread');
+  
+  // Always render as page-left for consistency on mobile
+  let html = `<div class="page-left">`;
+  html += renderPageMemories(memories, pattern);
+  html += `</div>`;
+  
+  spreadEl.innerHTML = html;
+  
+  // Update page counter to show paper number
+  document.getElementById('spread-num').textContent = paperIndex + 1;
+  document.getElementById('spread-total').textContent = totalPapers;
+  
+  // Wire up action buttons
+  spreadEl.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const memId = btn.dataset.memoryId;
+      const action = btn.dataset.action;
+      
+      if (action === 'edit') startEditMemory(memId);
+      else if (action === 'delete') {
+        if (confirm('Delete this memory?')) {
+          DiaryState.deleteMemory(memId);
+          if (typeof SupabaseSync !== 'undefined') SupabaseSync.deleteMemory(memId);
+          renderSinglePaper(mobileCurrentPaperIndex);
+        }
+      }
+    });
+  });
+  
+  // Mobile: Add click handler for left/right tap navigation
+  const pageLeft = spreadEl.querySelector('.page-left');
+  if (pageLeft) {
+    pageLeft.addEventListener('click', (e) => {
+      // Ignore clicks on content elements
+      if (e.target.closest('.memory-item, .memory-edit, .action-btn, input, textarea, button, .empty-state')) return;
+      
+      const pageRect = pageLeft.getBoundingClientRect();
+      const clickX = e.clientX - pageRect.left;
+      const thirdWidth = pageRect.width / 3;
+      
+      // Left third: go to previous paper
+      if (clickX < thirdWidth) {
+        goToPrevPaper();
+      }
+      // Right third: go to next paper
+      else if (clickX > pageRect.width - thirdWidth) {
+        goToNextPaper();
+      }
+      // Middle third: no action
+    });
+  }
+  
+  updateUIVisibility();
+  
+  // Add botanical elements and drag handlers
+  setTimeout(addBotanicalElements, 50);
+  setTimeout(() => { applyOffsets(); attachDragHandlers(); renderStickers(); attachStickerDragHandlers(); }, 80);
+}
+
+// Mobile navigation functions
+function goToNextPaper() {
+  if (!isMobile()) return;
+  if (isAnimating) return;
+  
+  const totalPapers = DiaryState.spreads.length * 2;
+  if (mobileCurrentPaperIndex >= totalPapers - 1) return;
+  
+  isAnimating = true;
+  const page = document.querySelector('.page-left');
+  if (page) page.classList.add('mobile-page-turn');
+  
+  setTimeout(() => {
+    mobileCurrentPaperIndex++;
+    renderSinglePaper(mobileCurrentPaperIndex);
+    page?.classList.remove('mobile-page-turn');
+    isAnimating = false;
+  }, 750);
+}
+
+function goToPrevPaper() {
+  if (!isMobile()) return;
+  if (isAnimating) return;
+  
+  if (mobileCurrentPaperIndex <= 0) return;
+  
+  isAnimating = true;
+  const page = document.querySelector('.page-left');
+  if (page) page.classList.add('mobile-page-turn');
+  
+  setTimeout(() => {
+    mobileCurrentPaperIndex--;
+    renderSinglePaper(mobileCurrentPaperIndex);
+    page?.classList.remove('mobile-page-turn');
+    isAnimating = false;
+  }, 750);
+}
+
+function renderMemoryItem(mem, slot) {
+  const actions = DIARY_MODE === 'editor' ? `
+    <div class="memory-actions">
+      <button class="action-btn" data-memory-id="${mem.id}" data-action="edit">✏️</button>
+      <button class="action-btn" data-memory-id="${mem.id}" data-action="delete">✕</button>
+    </div>
+  ` : '';
+
+  const dateDisplay = mem.time ? `${mem.date} • ${mem.time}` : (mem.date || 'no date');
+
+  // Alternate tilt: even slots lean left, odd slots lean right
+  const tilt = slot % 2 === 0 ? 'rotate(-2deg)' : 'rotate(2.5deg)';
+
+  const photoHtml = mem.photo ? `
+      <div class="memory-photo-wrapper" data-mem-id="${mem.id}" style="transform:${tilt}">
+        <img src="${mem.photo}" class="memory-photo" alt="memory photo">
+      </div>` : '';
+
+  return `
+    <div class="memory-item" data-mem-id="${mem.id}">
+      <div class="memory-layout">
+        <div class="memory-date-line">
+          <span class="memory-date">${dateDisplay}</span>
+        </div>
+        <div class="memory-body">
+          <div class="memory-text-area">
+            <div class="memory-title">${mem.title || ''}</div>
+            <div class="memory-text">${mem.text || ''}</div>
+            ${mem.notes ? `<div class="memory-notes">${mem.notes}</div>` : ''}
+          </div>
+          ${photoHtml}
+        </div>
+      </div>
+      ${actions}
+    </div>`;
+}
+
+let addPhotoFile = null;
+
+function openAddModal() {
+  if (DIARY_MODE === 'viewer') return;  // Prevent opening in viewer mode
+  
+  isDraggingContent = true; // Suppress page-turn swipes while form is open
+  
+  const today = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const currentTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+  
+  document.getElementById('add-date').value = today;
+  document.getElementById('add-time').value = currentTime;
+  document.getElementById('add-title').value = '';
+  document.getElementById('add-text').value = '';
+  document.getElementById('add-notes').value = '';
+  document.getElementById('add-photo').value = '';
+  addPhotoFile = null;
+  document.getElementById('add-photo-preview').innerHTML = '';
+  buildStickerPicker('add-sticker-picker');
+  document.getElementById('add-modal').classList.add('show');
+}
+
+function closeAddModal() {
+  isDraggingContent = false; // Re-enable page turns
+  document.getElementById('add-modal').classList.remove('show');
+  addPhotoFile = null;
+}
+
+async function submitAddMemory() {
+  if (DIARY_MODE === 'viewer') return;  // Prevent submission in viewer mode
+  
+  const date = document.getElementById('add-date').value;
+  const time = document.getElementById('add-time').value;
+  const title = document.getElementById('add-title').value;
+  const text = document.getElementById('add-text').value;
+  const notes = document.getElementById('add-notes').value;
+  
+  if (!text.trim()) {
+    alert('Please write your memory');
+    return;
+  }
+  
+  let photo = null;
+  if (addPhotoFile) {
+    photo = await fileToBase64(addPhotoFile);
+  }
+  
+  const selectedStickerEl = document.querySelector('#add-sticker-picker .sticker-option.selected');
+  const addStickerEmoji = selectedStickerEl ? selectedStickerEl.textContent.trim() : null;
+  const stickers = addStickerEmoji ? [{
+    id: 'stk_' + Date.now(),
+    emoji: addStickerEmoji,
+    x: 55 + (Math.random() * 6 - 3),
+    y: 8  + (Math.random() * 4 - 2),
+    rot: Math.round(Math.random() * 30 - 15),
+    scale: 1.0
+  }] : [];
+
+  // MOBILE: sync current spread to displayed paper
+  if (isMobile()) {
+    const spreadIndex = Math.floor(mobileCurrentPaperIndex / 2);
+    DiaryState.currentSpreadIndex = spreadIndex;
+  }
+
+  DiaryState.addMemory({date, time, title, text, photo, notes, stickers});
+  
+  // Sync new memory to Supabase
+  if (typeof SupabaseSync !== 'undefined') {
+    // Find actual location of this memory
+    const _curSpread = DiaryState.spreads[DiaryState.currentSpreadIndex];
+    let _syncSideActual = 'left', _syncSlot = 0;
+    if (_curSpread) {
+      const _allMems = [...(_curSpread.leftMemories || []), ...(_curSpread.rightMemories || [])];
+      const _syncMem = _allMems[_allMems.length - 1]; // just added, last element
+      const _li = (_curSpread.leftMemories || []).findIndex(m => m.id === _syncMem.id);
+      const _ri = (_curSpread.rightMemories || []).findIndex(m => m.id === _syncMem.id);
+      if (_li >= 0) { _syncSideActual = 'left'; _syncSlot = _li; }
+      else if (_ri >= 0) { _syncSideActual = 'right'; _syncSlot = _ri; }
+      const _syncSpreadNum = DiaryState.currentSpreadIndex + 1;
+      SupabaseSync.pushMemory(_syncMem, _syncSpreadNum, _syncSideActual, _syncSlot);
+      // Push photo if one was attached
+      if (typeof addPhotoFile !== 'undefined' && addPhotoFile) {
+        SupabaseSync.pushPhoto(_syncMem.id, addPhotoFile);
+      }
+    }
+  }
+  renderSpread();
+  closeAddModal();
+  
+  // Show success toast
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(60,15,30,0.9);color:#f0d0c0;padding:0.6rem 1.4rem;border-radius:22px;font-family:Caveat,cursive;font-size:1rem;z-index:2000;pointer-events:none;';
+  toast.textContent = '✨ Memory saved!';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2500);
+}
+
+function startEditMemory(memId) {
+  if (DIARY_MODE === 'viewer') return;  // Prevent editing in viewer mode
+  
+  const spread = DiaryState.getCurrentSpread();
+  let memory = spread.leftMemories.find(m => m.id === memId);
+  const isLeft = !!memory;
+  if (!memory) memory = spread.rightMemories.find(m => m.id === memId);
+  
+  if (!memory) return;
+  
+  const side = isLeft ? 'left' : 'right';
+  showEditForm(memory, side);
+}
+
+function showEditForm(memory, side) {
+  const pageContent = document.querySelector(side === 'left' ? '.page-left .page-content' : '.page-right .page-content');
+  if (!pageContent) return;
+  
+  const top = Math.random() * 25 + 10 + '%';
+  const left = Math.random() * 25 + 10 + '%';
+
+  const existingStickerList = (memory.stickers || []).map(s =>
+    `<span style="font-size:1.2rem;margin-right:4px;filter:saturate(0.75)">${s.emoji}</span>`
+  ).join('');
+  
+  const editHTML = `
+    <div class="memory-edit" data-memory-id="${memory.id}" style="top:${top};left:${left};">
+      <div class="edit-field">
+        <label>Date</label>
+        <input type="date" class="edit-date" value="${memory.date || ''}">
+      </div>
+      <div class="edit-field">
+        <label>Time</label>
+        <input type="time" class="edit-time" value="${memory.time || ''}">
+      </div>
+      <div class="edit-field">
+        <label>Title</label>
+        <input type="text" class="edit-title" value="${memory.title || ''}">
+      </div>
+      <div class="edit-field">
+        <label>Memory</label>
+        <textarea class="edit-text">${memory.text || ''}</textarea>
+      </div>
+      <div class="edit-field">
+        <label>Photo</label>
+        <input type="file" class="edit-photo" accept="image/*">
+        ${memory.photo ? `<img src="${memory.photo}" style="width:60px;height:60px;object-fit:cover;border-radius:2px;margin-top:0.4rem;border:2px solid #ccc;">` : ''}
+      </div>
+      <div class="edit-field">
+        <label>Note</label>
+        <input type="text" class="edit-notes" value="${memory.notes || ''}">
+      </div>
+      <div class="edit-field">
+        <label>Add Sticker</label>
+        ${existingStickerList ? `<div style="margin-bottom:6px;">Current: ${existingStickerList}</div>` : ''}
+        <div class="sticker-picker-row" id="edit-sticker-picker-${memory.id}">
+          <!-- populated by JS -->
+        </div>
+        <small style="color:#8b6040;font-size:0.75rem;margin-top:3px;display:block;">Select to add another sticker</small>
+      </div>
+      <div class="edit-actions">
+        <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
+        <button class="btn-save" onclick="saveEdit('${memory.id}', '${side}')">Save</button>
+      </div>
+    </div>
+  `;
+  
+  pageContent.insertAdjacentHTML('beforeend', editHTML);
+  buildStickerPicker('edit-sticker-picker-' + memory.id);
+}
+
+async function saveEdit(memId, side) {
+  if (DIARY_MODE === 'viewer') return;  // Prevent editing in viewer mode
+  
+  const editForm = document.querySelector(`[data-memory-id="${memId}"]`);
+  if (!editForm) return;
+  
+  const date = editForm.querySelector('.edit-date').value;
+  const time = editForm.querySelector('.edit-time').value;
+  const title = editForm.querySelector('.edit-title').value;
+  const text = editForm.querySelector('.edit-text').value;
+  const notes = editForm.querySelector('.edit-notes').value;
+  const photoInput = editForm.querySelector('.edit-photo');
+  
+  if (!text.trim()) {
+    alert('Memory cannot be empty');
+    return;
+  }
+  
+  const spread = DiaryState.getCurrentSpread();
+  const memory = side === 'left' 
+    ? spread.leftMemories.find(m => m.id === memId)
+    : spread.rightMemories.find(m => m.id === memId);
+  
+  if (!memory) return;
+  
+  if (photoInput.files.length > 0) {
+    memory.photo = await fileToBase64(photoInput.files[0]);
+  }
+
+  const editPickerEl = document.querySelector(`#edit-sticker-picker-${memId} .sticker-option.selected`);
+  const editStickerEmoji = editPickerEl ? editPickerEl.textContent.trim() : null;
+  if (editStickerEmoji) {
+    memory.stickers = memory.stickers || [];
+    memory.stickers.push({
+      id: 'stk_' + Date.now(),
+      emoji: editStickerEmoji,
+      x: 55 + (Math.random() * 6 - 3),
+      y: 8  + (Math.random() * 4 - 2),
+      rot: Math.round(Math.random() * 30 - 15),
+      scale: 1.0
+    });
+  }
+  
+  DiaryState.editMemory(memId, {date, time, title, text, notes});
+  // Sync edited memory to Supabase
+  if (typeof SupabaseSync !== 'undefined') {
+    const _curSpread2 = DiaryState.spreads[DiaryState.currentSpreadIndex];
+    const _spreadNum2 = DiaryState.currentSpreadIndex + 1;
+    let _editSide = 'left', _editSlot = 0;
+    if (_curSpread2) {
+      const _li2 = (_curSpread2.leftMemories || []).findIndex(m => m.id === memId);
+      const _ri2 = (_curSpread2.rightMemories || []).findIndex(m => m.id === memId);
+      if (_li2 >= 0) { _editSide = 'left'; _editSlot = _li2; }
+      else if (_ri2 >= 0) { _editSide = 'right'; _editSlot = _ri2; }
+    }
+    const _allMems2 = [...(_curSpread2?.leftMemories || []), ...(_curSpread2?.rightMemories || [])];
+    const _editedMem = _allMems2.find(m => m.id === memId);
+    if (_editedMem) SupabaseSync.pushMemory(_editedMem, _spreadNum2, _editSide, _editSlot);
+  }
+  renderSpread();
+}
+
+function cancelEdit() {
+  renderSpread();
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Show login screen first (gate to diary) - CRITICAL: Must be first!
+  console.log('DOMContentLoaded firing - showing login...');
+  console.log('_supabaseReady:', _supabaseReady);
+  
+  // ALWAYS show login first, regardless of Supabase config
+  showLoginSpread();
+  console.log('Login rendered');
+  
+  document.getElementById('add-photo').addEventListener('change', (e) => {
+    addPhotoFile = e.target.files[0] || null;
+    const preview = document.getElementById('add-photo-preview');
+    if (addPhotoFile) {
+      const url = URL.createObjectURL(addPhotoFile);
+      preview.innerHTML = `<img src="${url}" style="width:80px;height:80px;object-fit:cover;border-radius:2px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.2);">`;
+    } else {
+      preview.innerHTML = '';
+    }
+  });
+  
+  document.getElementById('btn-add').addEventListener('click', openAddModal);
+  document.getElementById('btn-logout').addEventListener('click', handleLogout);
+  document.getElementById('add-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'add-modal') closeAddModal();
+  });
+  
+  // Prevent touch bubbling from modal content to backdrop
+  document.querySelector('#add-modal .modal-content')?.addEventListener('touchstart', e => e.stopPropagation(), { passive: false });
+  document.querySelector('#add-modal .modal-content')?.addEventListener('touchmove', e => e.stopPropagation(), { passive: false });
+  
+  const container = document.getElementById('petals');
+  const colors = ['rgba(180,80,100,0.45)','rgba(200,110,120,0.38)','rgba(220,140,140,0.32)','rgba(160,60,90,0.42)','rgba(240,170,170,0.28)','rgba(200,100,110,0.4)'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const size = 4 + Math.random() * 9;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 18;
+    const dur = 12 + Math.random() * 16;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    p.style.cssText = `width:${size}px;height:${size*0.65}px;left:${left}%;top:-${size}px;background:${color};animation-duration:${dur}s;animation-delay:${delay}s;`;
+    container.appendChild(p);
+  }
+  
+  // Add spine stitching
+  const spineStitching = document.getElementById('spine-stitching');
+  for (let i = 0; i < 6; i++) {
+    const stitch = document.createElement('div');
+    stitch.className = 'spine-stitch';
+    spineStitching.appendChild(stitch);
+  }
+  
+  // Initialize botanical elements on pages
+  setTimeout(addBotanicalElements, 100);
+  
+  // Add mobile swipe handlers for page turning
+  if (isMobile()) {
+    const bookEl = document.getElementById('book');
+    if (bookEl) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      
+      bookEl.addEventListener('touchstart', (e) => {
+        if (document.getElementById('add-modal').classList.contains('show')) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isUserSwiping = true;
+      }, false);
+      
+      bookEl.addEventListener('touchend', (e) => {
+        if (!isUserSwiping) return;
+        if (isDraggingContent) { isUserSwiping = false; return; }
+        if (document.getElementById('add-modal').classList.contains('show')) { isUserSwiping = false; return; }
+        
+        const touchEndX = e.changedTouches[0].clientX;
+        const deltaX = touchEndX - touchStartX;
+        const threshold = 40; // pixels
+        
+        if (Math.abs(deltaX) > threshold) {
+          if (deltaX < 0) {
+            // Swiped left → next page
+            goToNextPaper();
+          } else {
+            // Swiped right → prev page
+            goToPrevPaper();
+          }
+        }
+        
+        isUserSwiping = false;
+      }, false);
+    }
+  }
+  
+  // DON'T call renderSpread() here! Login form should show first
+  // renderSpread() will be called AFTER login succeeds (in handleLogin)
+});
+
+function addBotanicalElements() {
+  const leftPage = document.querySelector('.page-left');
+  const rightPage = document.querySelector('.page-right');
+  
+  if (leftPage) addBotanicalToPage(leftPage, 'left');
+  if (rightPage) addBotanicalToPage(rightPage, 'right');
+}
+
+function addBotanicalToPage(page, side) {
+  // Remove old decorations
+  page.querySelectorAll('.botanical-element').forEach(el => el.remove());
+
+  /* ── SVG helpers ── */
+  const flower = (c, sz) => `<svg width="${sz}" height="${sz}" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="22" cy="11" rx="4" ry="7"  fill="${c}" opacity="0.55"/>
+    <ellipse cx="22" cy="33" rx="4" ry="7"  fill="${c}" opacity="0.55"/>
+    <ellipse cx="11" cy="22" rx="7" ry="4"  fill="${c}" opacity="0.55"/>
+    <ellipse cx="33" cy="22" rx="7" ry="4"  fill="${c}" opacity="0.55"/>
+    <ellipse cx="13" cy="13" rx="4" ry="6.5" transform="rotate(45 13 13)"  fill="${c}" opacity="0.45"/>
+    <ellipse cx="31" cy="13" rx="4" ry="6.5" transform="rotate(-45 31 13)" fill="${c}" opacity="0.45"/>
+    <ellipse cx="13" cy="31" rx="4" ry="6.5" transform="rotate(-45 13 31)" fill="${c}" opacity="0.45"/>
+    <ellipse cx="31" cy="31" rx="4" ry="6.5" transform="rotate(45 31 31)"  fill="${c}" opacity="0.45"/>
+    <circle cx="22" cy="22" r="4.5" fill="${c}" opacity="0.85"/>
+    <circle cx="22" cy="22" r="2.5" fill="#fff8f0" opacity="0.6"/>
+  </svg>`;
+
+  const leaf = (c, sz) => `<svg width="${sz}" height="${Math.round(sz*0.65)}" viewBox="0 0 38 25" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 13 Q10 2 24 3 Q35 4 36 12 Q35 20 24 22 Q10 23 2 13Z" fill="${c}" opacity="0.5"/>
+    <path d="M2 13 Q19 11 36 12" stroke="${c}" stroke-width="0.8" fill="none" opacity="0.6"/>
+    <path d="M12 6 Q15 12 14 18" stroke="${c}" stroke-width="0.6" fill="none" opacity="0.4"/>
+    <path d="M24 5 Q23 12 22 19" stroke="${c}" stroke-width="0.6" fill="none" opacity="0.4"/>
+  </svg>`;
+
+  const heart = (c, sz) => `<svg width="${sz}" height="${sz}" viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 27 C16 27 3 18 3 10 C3 5 7 2 11 3 C13 3.5 15 5 16 7 C17 5 19 3.5 21 3 C25 2 29 5 29 10 C29 18 16 27 16 27Z" fill="${c}" opacity="0.6"/>
+  </svg>`;
+
+  const star = (c, sz) => `<svg width="${sz}" height="${sz}" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="15,2 18,11 28,11 20,17 23,27 15,21 7,27 10,17 2,11 12,11" fill="${c}" opacity="0.55"/>
+  </svg>`;
+
+  const tape = (w, h, c) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${w}" height="${h}" rx="2" fill="${c}" opacity="0.35"/>
+    <rect x="0" y="${h*0.3}" width="${w}" height="${h*0.4}" fill="${c}" opacity="0.12"/>
+  </svg>`;
+
+  const flowerColors = ['#c06080','#d4908a','#b87060','#c090a0','#a06840','#d4a0b0'];
+  const leafColors   = ['#607040','#708050','#506030','#7a9050'];
+  const heartColors  = ['#d46080','#c05070','#e08090'];
+  const starColors   = ['#c09040','#b08030','#d4b060'];
+  const tapeColors   = ['rgba(200,180,140,1)','rgba(160,200,160,1)','rgba(180,160,200,1)','rgba(220,180,140,1)'];
+
+  // Place decorations in safe zones: corners + mid-edge areas
+  // (We deliberately avoid the center 60%×60% content area)
+  const placements = [
+    // top-left corner cluster
+    { top:'2%',  left:'1%',  rot:12,  type:'flower', ci:0, sz:20 },
+    { top:'4%',  left:'5%',  rot:-8,  type:'leaf',   ci:0, sz:22 },
+    // top-right corner cluster
+    { top:'1%',  right:'2%', rot:-15, type:'flower', ci:2, sz:18 },
+    { top:'5%',  right:'5%', rot:20,  type:'leaf',   ci:1, sz:20 },
+    // bottom-left cluster
+    { bottom:'2%', left:'2%', rot:-12, type:'flower', ci:3, sz:19 },
+    { bottom:'5%', left:'6%', rot:30,  type:'leaf',   ci:2, sz:18 },
+    // bottom-right cluster
+    { bottom:'2%', right:'1%', rot:18,  type:'flower', ci:1, sz:20 },
+    { bottom:'6%', right:'6%', rot:-25, type:'leaf',   ci:3, sz:17 },
+    // mid-left edge accent
+    { top:'45%', left:'0%', rot:50, type:'leaf', ci:0, sz:16 },
+    // mid-right edge accent
+    { top:'48%', right:'0%', rot:-40, type:'leaf', ci:2, sz:15 },
+    // tiny hearts + stars scattered near corners
+    { top:'8%',  left:'2%',  rot:0,   type:'heart', ci:0, sz:12 },
+    { bottom:'8%', right:'2%', rot:5, type:'heart', ci:1, sz:11 },
+    { top:'3%',  left:'30%', rot:0,  type:'star',  ci:0, sz:10 },
+    { bottom:'3%', right:'28%', rot:0, type:'star', ci:1, sz:9  },
+    // tape strips near top + bottom edges
+    { top:'-1%', left:'20%', rot:'-2', type:'tape', tw:55, th:10, ci:0 },
+    { bottom:'-1%', right:'18%', rot:'3', type:'tape', tw:48, th:9, ci:2 },
+  ];
+
+  placements.forEach((p) => {
+    // Skip right-edge items on left page, left-edge items on right page
+    // to keep decorations near the actual paper edge they belong to
+    if (side === 'left'  && p.right && parseFloat(p.right) < 8) return;
+    if (side === 'right' && p.left  && parseFloat(p.left)  < 8) return;
+
+    const el = document.createElement('div');
+    el.className = 'botanical-element';
+    el.style.position = 'absolute';
+    el.style.pointerEvents = 'none';
+    el.style.zIndex = '4';
+    el.style.lineHeight = '0';
+
+    if (p.top)    el.style.top    = p.top;
+    if (p.bottom) el.style.bottom = p.bottom;
+    if (p.left)   el.style.left   = p.left;
+    if (p.right)  el.style.right  = p.right;
+    el.style.transform = `rotate(${p.rot}deg)`;
+
+    if (p.type === 'flower') {
+      el.style.opacity = '0.7';
+      el.style.filter  = 'drop-shadow(0 1px 2px rgba(80,40,20,0.25))';
+      el.innerHTML = flower(flowerColors[p.ci % flowerColors.length], p.sz);
+    } else if (p.type === 'leaf') {
+      el.style.opacity = '0.65';
+      el.style.filter  = 'drop-shadow(0 1px 1px rgba(40,60,20,0.2))';
+      el.innerHTML = leaf(leafColors[p.ci % leafColors.length], p.sz);
+    } else if (p.type === 'heart') {
+      el.style.opacity = '0.6';
+      el.innerHTML = heart(heartColors[p.ci % heartColors.length], p.sz);
+    } else if (p.type === 'star') {
+      el.style.opacity = '0.55';
+      el.innerHTML = star(starColors[p.ci % starColors.length], p.sz);
+    } else if (p.type === 'tape') {
+      el.style.opacity = '0.7';
+      el.style.filter  = 'drop-shadow(0 1px 2px rgba(80,60,30,0.15))';
+      el.innerHTML = tape(p.tw, p.th, tapeColors[p.ci % tapeColors.length]);
+    }
+    page.appendChild(el);
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAddModal();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   DRAG-TO-REPOSITION  (editor mode only)
+   ─────────────────────────────────────────────────────────
+   Strategy:
+   • We never touch existing CSS layout. The first render is
+     always pixel-identical to the pre-drag version.
+   • After render, we read any saved pixel offsets from
+     localStorage and apply them as CSS translate().
+   • On drag we update that translate live, then persist.
+   • Page-turn is already blocked by the existing
+     closest('.memory-item') guard in the click handlers.
+═══════════════════════════════════════════════════════════ */
+
+// ── Offset store (separate from DiaryStorage so data model is untouched) ──
+const OffsetStore = {
+  _key: 'sabi_offsets_v2',   // v2 = stores % not px
+  _data: {},
+  load() {
+    try { this._data = JSON.parse(localStorage.getItem(this._key) || '{}'); }
+    catch(e) { this._data = {}; }
+  },
+  // Store as % of page dimensions so position is page-relative, not pixel-relative
+  get(id, type) {
+    const k = id + '_' + type;
+    return this._data[k] || { pctX: 0, pctY: 0 };
+  },
+  set(id, type, pctX, pctY) {
+    this._data[id + '_' + type] = { pctX, pctY };
+    localStorage.setItem(this._key, JSON.stringify(this._data));
+  }
+};
+OffsetStore.load();
+
+// ── Patch OffsetStore.set to sync positions to Supabase ──
+if (typeof SupabaseSync !== 'undefined') {
+  const _origOffsetSet = OffsetStore.set.bind(OffsetStore);
+  OffsetStore.set = function(id, type, pctX, pctY) {
+    _origOffsetSet(id, type, pctX, pctY);
+    if (type === 'photo') SupabaseSync.pushPhotoPosition(id, pctX, pctY);
+    else if (type === 'text') SupabaseSync.pushTextPosition(id, pctX, pctY);
+  };
+}
+
+// ── Render stickers for all memories on the current spread ──
+function renderStickers() {
+  const spread = DiaryState.getCurrentSpread();
+  if (!spread) return;
+
+  const allMemories = [
+    ...spread.leftMemories,
+    ...spread.rightMemories
+  ];
+
+  allMemories.forEach(mem => {
+    if (!mem.stickers || mem.stickers.length === 0) return;
+    const memEl = document.querySelector(`.memory-item[data-mem-id="${mem.id}"]`);
+    if (!memEl) return;
+    const pageEl = memEl.closest('.page-left, .page-right');
+    if (!pageEl) return;
+
+    mem.stickers.forEach(sticker => {
+      const el = document.createElement('div');
+      el.className = 'memory-sticker';
+      el.dataset.stickerId = sticker.id;
+      el.dataset.memId = mem.id;
+      el.style.left  = sticker.x + '%';
+      el.style.top   = sticker.y + '%';
+      el.style.transform = `rotate(${sticker.rot || 0}deg) scale(${sticker.scale || 1})`;
+
+      const deleteBtn = document.createElement('span');
+      deleteBtn.className = 'sticker-delete';
+      deleteBtn.textContent = '✕';
+      
+      el.appendChild(document.createTextNode(sticker.emoji));
+      
+      // Always append delete button, but guard deletion at click time
+      deleteBtn.addEventListener('click', (e) => {
+        if (DIARY_MODE !== 'editor') return;  // Check at click time, not render time
+        e.stopPropagation();
+        const _deletedStickerId = sticker.id;
+        mem.stickers = mem.stickers.filter(s => s.id !== sticker.id);
+        DiaryState.save();
+        if (typeof SupabaseSync !== 'undefined') SupabaseSync.deleteSticker(_deletedStickerId);
+        renderSpread();
+      });
+      el.appendChild(deleteBtn);
+      pageEl.appendChild(el);
+    });
+  });
+}
+
+// ── Make rendered sticker elements draggable ──
+function attachStickerDragHandlers() {
+  if (DIARY_MODE !== 'editor') return;
+
+  document.querySelectorAll('.memory-sticker').forEach(el => {
+    const stickerId = el.dataset.stickerId;
+    const memId     = el.dataset.memId;
+    if (!stickerId || !memId) return;
+
+    let startX, startY, startLeft, startTop, moved;
+
+    el.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.sticker-delete')) return;
+      e.stopPropagation();
+      isDraggingContent = true; // Set flag for swipe detection
+      el.setPointerCapture(e.pointerId);
+      moved = false;
+
+      startLeft = parseFloat(el.style.left)  || 0;
+      startTop  = parseFloat(el.style.top)   || 0;
+      startX = e.clientX;
+      startY = e.clientY;
+      el.style.cursor = 'grabbing';
+      el.style.zIndex = '50';
+
+      const onMove = (ev) => {
+        const page = el.closest('.page-left, .page-right');
+        if (!page) return;
+        const pr = page.getBoundingClientRect();
+
+        const dxPct = ((ev.clientX - startX) / pr.width)  * 100;
+        const dyPct = ((ev.clientY - startY) / pr.height) * 100;
+
+        const newLeft = Math.max(0, Math.min(95, startLeft + dxPct));
+        const newTop  = Math.max(0, Math.min(95, startTop  + dyPct));
+
+        el.style.left = newLeft + '%';
+        el.style.top  = newTop  + '%';
+        el._newLeft = newLeft;
+        el._newTop  = newTop;
+        if (Math.abs(ev.clientX - startX) > 3 || Math.abs(ev.clientY - startY) > 3) moved = true;
+      };
+
+      const onUp = () => {
+        el.style.cursor = 'grab';
+        el.style.zIndex = '8';
+        isDraggingContent = false; // Clear flag for swipe detection
+        el.removeEventListener('pointermove', onMove);
+        el.removeEventListener('pointerup',   onUp);
+
+        if (moved && el._newLeft !== undefined) {
+          const spread = DiaryState.getCurrentSpread();
+          if (!spread) return;
+          const allMems = [...spread.leftMemories, ...spread.rightMemories];
+          const mem = allMems.find(m => m.id === memId);
+          if (!mem) return;
+          const sticker = (mem.stickers || []).find(s => s.id === stickerId);
+          if (!sticker) return;
+          sticker.x = el._newLeft;
+          sticker.y = el._newTop;
+          DiaryState.save();
+          if (typeof SupabaseSync !== 'undefined') SupabaseSync.pushSticker(memId, sticker);
+        }
+      };
+
+      el.addEventListener('pointermove', onMove);
+      el.addEventListener('pointerup',   onUp);
+    });
+  });
+}
+
+// ── Populate sticker picker UI ──
+function buildStickerPicker(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  STICKERS.forEach(s => {
+    const span = document.createElement('span');
+    span.className = 'sticker-option';
+    span.textContent = s.emoji;
+    span.title = s.label;
+    span.addEventListener('click', () => {
+      // Toggle: if already selected, deselect. Otherwise select only this one.
+      const alreadySelected = span.classList.contains('selected');
+      container.querySelectorAll('.sticker-option').forEach(o => o.classList.remove('selected'));
+      if (!alreadySelected) span.classList.add('selected');
+    });
+    container.appendChild(span);
+  });
+}
+
+// ── Apply saved offsets after every renderSpread ──
+function applyOffsets() {
+  if (DIARY_MODE !== 'editor') return;
+
+  // Helper: convert saved % offset → px using the element's parent page size
+  function pctToPx(el, pctX, pctY) {
+    if (pctX === 0 && pctY === 0) return { dx: 0, dy: 0 };
+    const page = el.closest('.page-left, .page-right');
+    if (!page) return { dx: 0, dy: 0 };
+    const pr = page.getBoundingClientRect();
+    return { dx: (pctX / 100) * pr.width, dy: (pctY / 100) * pr.height };
+  }
+
+  // Memory text blocks
+  document.querySelectorAll('.memory-item').forEach(item => {
+    const memId = item.dataset.memId;
+    if (!memId) return;
+    const o = OffsetStore.get(memId, 'text');
+    if (o.pctX !== 0 || o.pctY !== 0) {
+      const { dx, dy } = pctToPx(item, o.pctX, o.pctY);
+      item.style.transform = `translate(${dx}px, ${dy}px)`;
+      item.style.willChange = 'transform';
+      item.style.position = 'relative';
+      item.style.zIndex = '5';
+    }
+  });
+
+  // Photo wrappers
+  document.querySelectorAll('.memory-photo-wrapper').forEach(wrapper => {
+    const memId = wrapper.dataset.memId;
+    if (!memId) return;
+    const o = OffsetStore.get(memId, 'photo');
+    if (o.pctX !== 0 || o.pctY !== 0) {
+      const { dx, dy } = pctToPx(wrapper, o.pctX, o.pctY);
+      const rot = (wrapper.style.transform || '').match(/rotate\([^)]+\)/);
+      wrapper.style.transform = `translate(${dx}px, ${dy}px) ${rot ? rot[0] : ''}`;
+      wrapper.style.position = 'relative';
+      wrapper.style.zIndex = '6';
+    }
+  });
+}
+
+// ── Make an element draggable ──
+function makeDraggable(el, memId, type) {
+  if (DIARY_MODE !== 'editor') return;
+  
+  el.style.cursor = 'grab';
+  el.style.touchAction = 'none';
+
+  let startClientX, startClientY, startDx, startDy, moved;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.action-btn, button, input, textarea, .memory-edit')) return;
+
+    moved = false;
+    isDraggingContent = true; // Set flag for swipe detection
+    e.stopPropagation();
+    el.setPointerCapture(e.pointerId);
+
+    // Recover current pixel offset from saved %, using live page size
+    const page = el.closest('.page-left, .page-right');
+    const pr   = page ? page.getBoundingClientRect() : null;
+    const saved = OffsetStore.get(memId, type);
+    startDx = pr ? (saved.pctX / 100) * pr.width  : 0;
+    startDy = pr ? (saved.pctY / 100) * pr.height : 0;
+
+    startClientX = e.clientX;
+    startClientY = e.clientY;
+
+    el.style.cursor = 'grabbing';
+    el.style.zIndex = '50';
+
+    const onMove = (ev) => {
+      const rawDx = startDx + (ev.clientX - startClientX);
+      const rawDy = startDy + (ev.clientY - startClientY);
+
+      if (Math.abs(ev.clientX - startClientX) > 3 ||
+          Math.abs(ev.clientY - startClientY) > 3) moved = true;
+
+      const pg = el.closest('.page-left, .page-right');
+      let cdx = rawDx, cdy = rawDy;
+
+      if (pg) {
+        // Clamp: keep element fully inside its physical page
+        const pgr = pg.getBoundingClientRect();
+        const elW = el.offsetWidth  || 60;
+        const elH = el.offsetHeight || 40;
+        // Natural (un-translated) element position relative to page
+        const er     = el.getBoundingClientRect();
+        const natL   = er.left - pgr.left - startDx;
+        const natT   = er.top  - pgr.top  - startDy;
+        
+        // More generous margins on mobile to ensure content stays visible
+        const marginMobile = isMobile() ? 2 : 4;
+        cdx = Math.max(-natL + marginMobile,            Math.min(pgr.width  - natL - elW - marginMobile, rawDx));
+        cdy = Math.max(-natT + marginMobile,            Math.min(pgr.height - natT - elH - marginMobile, rawDy));
+      }
+
+      if (type === 'photo') {
+        const rot = (el.style.transform || '').match(/rotate\([^)]+\)/);
+        el.style.transform = `translate(${cdx}px, ${cdy}px) ${rot ? rot[0] : ''}`;
+      } else {
+        el.style.transform = `translate(${cdx}px, ${cdy}px)`;
+      }
+      el._pendingDx = cdx;
+      el._pendingDy = cdy;
+    };
+
+    const onUp = () => {
+      el.style.cursor = 'grab';
+      el.style.zIndex = type === 'photo' ? '6' : '5';
+      isDraggingContent = false; // Clear flag for swipe detection
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup',   onUp);
+
+      if (moved && el._pendingDx !== undefined) {
+        // Save as % of page so position is page-relative, not viewport-relative
+        const pg  = el.closest('.page-left, .page-right');
+        const pgr = pg ? pg.getBoundingClientRect() : null;
+        if (pgr && pgr.width && pgr.height) {
+          const pctX = (el._pendingDx / pgr.width)  * 100;
+          const pctY = (el._pendingDy / pgr.height) * 100;
+          OffsetStore.set(memId, type, pctX, pctY);
+        } else {
+          // Fallback: store 0 so it doesn't drift
+          OffsetStore.set(memId, type, 0, 0);
+        }
+      }
+    };
+
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup',   onUp);
+  });
+
+  el.addEventListener('mouseenter', () => {
+    if (DIARY_MODE !== 'editor') return;
+    el.style.outline = '1.5px dashed rgba(160,80,100,0.35)';
+    el.style.outlineOffset = '4px';
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.outline = '';
+    el.style.outlineOffset = '';
+  });
+}
+
+// ── Attach drag handlers after every render ──
+function attachDragHandlers() {
+  if (DIARY_MODE !== 'editor') return;
+
+  // Text: whole memory-item is draggable
+  document.querySelectorAll('.memory-item').forEach(item => {
+    const memId = item.dataset.memId;
+    if (!memId) return;
+    makeDraggable(item, memId, 'text');
+  });
+
+  // Photo card
+  document.querySelectorAll('.memory-photo-wrapper').forEach(wrapper => {
+    const memId = wrapper.dataset.memId;
+    if (!memId) return;
+    // Override hover to grabbing so it doesn't conflict with the rotate hover
+    wrapper.style.cursor = 'grab';
+    makeDraggable(wrapper, memId, 'photo');
+  });
+}
+
+// ── Supabase login button ──
+function showLoginSpread() {
+  console.log('showLoginSpread called');
+  const spreadEl = document.getElementById('current-spread');
+  if (!spreadEl) {
+    console.error('ERROR: #current-spread not found!');
+    return;
+  }
+  console.log('Rendering login spread...');
+  
+  const mobile = isMobile();
+  const imgWidth = mobile ? 160 : 200;
+  
+  // Scrapbook sticker illustration with decorative elements
+  const girlsIllustration = `
+    <div class="login-sticker-container">
+      <!-- Decorative elements behind sticker -->
+      <div class="login-decorations-back">
+        <span class="deco-flower" style="left: 12%; top: 8%;">🌸</span>
+        <span class="deco-flower" style="right: 18%; top: 12%;">✿</span>
+        <span class="deco-heart" style="left: 8%; top: 45%;">♡</span>
+      </div>
+      
+      <!-- Main sticker with die-cut edges -->
+      <div class="login-sticker-wrapper" style="width: ${imgWidth}px;">
+        <img 
+          src="assets/images/photos/login.jpeg" 
+          alt="Two girls" 
+          class="login-sticker-img"
+        />
+      </div>
+      
+      <!-- Decorative elements in front -->
+      <div class="login-decorations-front">
+        <span class="deco-heart" style="right: 15%; bottom: 15%;">♡</span>
+        <span class="deco-sparkle" style="left: 15%; bottom: 20%;">✨</span>
+        <span class="deco-flower" style="right: 10%; bottom: 8%;">✿</span>
+      </div>
+    </div>
+  `;
+  
+  if (mobile) {
+    spreadEl.innerHTML = `
+      <div class="page-left login-paper" id="login-page">
+        <div class="login-content">
+          <div class="login-heading-area">
+            ${girlsIllustration}
+            <span class="login-subheading">open your memories</span>
+          </div>
+          <form class="login-form" id="login-form" onsubmit="return false;">
+            <div class="login-field">
+              <label class="login-label" for="login-email">email</label>
+              <input type="email" id="login-email" class="login-input" autocomplete="email" />
+            </div>
+            <div class="login-field">
+              <label class="login-label" for="login-password">password</label>
+              <div class="login-password-wrapper">
+                <input type="password" id="login-password" class="login-input" autocomplete="current-password" />
+                <button type="button" class="login-password-toggle" id="login-password-toggle" aria-label="show password">👁</button>
+              </div>
+            </div>
+            <button type="submit" class="login-submit-torn login-btn-hidden" id="login-btn">Open Diary ♡</button>
+            <p class="login-error" id="login-error"></p>
+          </form>
+        </div>
+      </div>
+    `;
+  } else {
+    spreadEl.innerHTML = `
+      <div class="page-left login-paper" id="login-page">
+        <div class="login-content">
+          <div class="login-heading-area">
+            ${girlsIllustration}
+            <span class="login-subheading">open your memories</span>
+          </div>
+          <form class="login-form" id="login-form" onsubmit="return false;">
+            <div class="login-field">
+              <label class="login-label" for="login-email">email</label>
+              <input type="email" id="login-email" class="login-input" autocomplete="email" />
+            </div>
+            <div class="login-field">
+              <label class="login-label" for="login-password">password</label>
+              <div class="login-password-wrapper">
+                <input type="password" id="login-password" class="login-input" autocomplete="current-password" />
+                <button type="button" class="login-password-toggle" id="login-password-toggle" aria-label="show password">👁</button>
+              </div>
+            </div>
+            <button type="submit" class="login-submit-torn login-btn-hidden" id="login-btn">Open Diary ♡</button>
+            <p class="login-error" id="login-error"></p>
+          </form>
+        </div>
+      </div>
+      <div class="page-right login-right-paper" id="login-right-page">
+        <div class="login-right-content">
+          <span class="login-right-date">2026</span>
+          <span class="login-right-title">SABI</span>
+          <span class="login-right-sub">little things<br>worth remembering</span>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Wire up login form
+  try {
+    const loginBtn = document.getElementById('login-btn');
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+    
+    // Function to check if both fields are filled
+    function checkFieldsFilled() {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      
+      if (email && password) {
+        loginBtn.classList.remove('login-btn-hidden');
+        loginBtn.classList.add('login-btn-visible');
+      } else {
+        loginBtn.classList.add('login-btn-hidden');
+        loginBtn.classList.remove('login-btn-visible');
+      }
+    }
+    
+    // Listen to input events on both fields
+    emailInput.addEventListener('input', checkFieldsFilled);
+    passwordInput.addEventListener('input', checkFieldsFilled);
+    
+    // Initial check
+    checkFieldsFilled();
+    
+    loginBtn.addEventListener('click', handleLogin);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    
+    // Password toggle
+    const toggleBtn = document.getElementById('login-password-toggle');
+    const pwInput = document.getElementById('login-password');
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+      } else {
+        pwInput.type = 'password';
+        toggleBtn.textContent = '👁';
+      }
+    });
+    
+    emailInput.addEventListener('keydown', e => { 
+      if(e.key==='Enter') passwordInput.focus(); 
+    });
+    passwordInput.addEventListener('keydown', e => { 
+      if(e.key==='Enter' && !loginBtn.classList.contains('login-btn-hidden')) handleLogin(); 
+    });
+    console.log('Login event listeners attached successfully');
+  } catch (e) {
+    console.error('Error attaching login listeners:', e);
+  }
+}
+
+async function handleLogin() {
+  const btn = document.getElementById('login-btn');
+  const errEl = document.getElementById('login-error');
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  
+  errEl.classList.remove('visible');
+  
+  if (!email || !password) {
+    errEl.textContent = 'Please enter your email and password';
+    errEl.classList.add('visible');
+    return;
+  }
+  
+  btn.textContent = 'opening...';
+  btn.disabled = true;
+  
+  try {
+    await SupabaseSync.signIn(email, password);
+    const role = await SupabaseSync.getRole();
+    setDiaryMode(role === 'owner' ? 'editor' : 'viewer');
+    
+    // Load data before animating away
+    await SupabaseSync.pull();
+    
+    // Mobile-first: animate based on viewport size
+    const mobile = isMobile();
+    const loginPage = document.getElementById('login-page');
+    const loginRightPage = document.getElementById('login-right-page');
+    
+    if (mobile) {
+      // Mobile: animate only the single login paper away
+      if (loginPage) {
+        loginPage.style.transformStyle = 'preserve-3d';
+        loginPage.style.transformOrigin = '100% 50%';
+        loginPage.classList.add('login-page-exit');
+      }
+    } else {
+      // Desktop: animate both login pages away
+      if (loginPage) {
+        loginPage.style.transformStyle = 'preserve-3d';
+        loginPage.style.transformOrigin = '100% 50%';
+        loginPage.classList.add('login-page-exit');
+      }
+      if (loginRightPage) {
+        loginRightPage.style.transformStyle = 'preserve-3d';
+        loginRightPage.style.transformOrigin = '100% 50%';
+        loginRightPage.classList.add('login-page-exit');
+      }
+    }
+    
+    setTimeout(() => {
+      initDiaryAfterLogin();
+    }, 720);
+  } catch(err) {
+    btn.textContent = 'Open Diary';
+    btn.disabled = false;
+    errEl.textContent = err.message || 'Login failed. Please try again.';
+    errEl.classList.add('visible');
+  }
+}
+
+if (typeof SupabaseSync !== 'undefined') {
+  // Attach handlers once DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // This will be called by showLoginSpread() when needed
+  });
+}
+
+// ── Logout function ──
+async function handleLogout() {
+  if (typeof SupabaseSync !== 'undefined') {
+    try {
+      await SupabaseSync.signOut();
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  }
+  // Go back to homepage
+  window.location.href = 'index.html';
+}
+
+// Mobile swipe detection
+document.addEventListener('DOMContentLoaded', () => {
+  const bookEl = document.getElementById('book');
+  if (!bookEl) return;
+
+  let touchOnContent = false;
+
+  bookEl.addEventListener('touchstart', (e) => {
+    if (!isMobile()) return;
+    // Reset stale state from any prior pointer events
+    isDraggingContent = false;
+    isUserSwiping = false;
+    touchOnContent = false;
+
+    if (e.touches.length > 0) {
+      swipeStartX = e.touches[0].clientX;
+      isUserSwiping = true;
+      // Check if touch started on a draggable content element
+      touchOnContent = !!e.target.closest('.memory-item, .memory-photo-wrapper, .memory-sticker');
+    }
+  }, { passive: true });
+
+  bookEl.addEventListener('touchmove', (e) => {
+    if (!isMobile()) return;
+    if (!isUserSwiping) return;
+  }, { passive: true });
+
+  bookEl.addEventListener('touchend', (e) => {
+    if (!isMobile()) return;
+    if (!isUserSwiping) return;
+
+    // Only block navigation if user was actually dragging a content element
+    if (isDraggingContent && touchOnContent) {
+      isUserSwiping = false;
+      isDraggingContent = false;
+      touchOnContent = false;
+      return;
+    }
+
+    if (e.changedTouches.length > 0) {
+      const deltaX = e.changedTouches[0].clientX - swipeStartX;
+
+      if (deltaX < -40) {
+        goToNextPaper();
+      } else if (deltaX > 40) {
+        goToPrevPaper();
+      }
+    }
+
+    isUserSwiping = false;
+    isDraggingContent = false;
+    touchOnContent = false;
+  }, { passive: true });
+});
+
+// Window resize handling: switch between mobile/desktop rendering
+window.addEventListener('resize', () => {
+  if (!isLoggedIn) {
+    console.log('Resize detected but user not logged in — ignoring renderSpread()');
+    return;
+  }
+  const nowMobile = isMobile();
+  if (nowMobile !== wasMobile) {
+    wasMobile = nowMobile;
+    renderSpread();
+  }
+});
+
+// Initialize wasMobile on page load
+wasMobile = isMobile();
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
