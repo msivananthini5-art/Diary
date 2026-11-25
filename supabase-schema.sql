@@ -3,35 +3,33 @@
 --  Run this ONCE in your Supabase SQL editor (Database → SQL Editor)
 -- ============================================================
 
--- profiles (owner | viewer roles)
-create table if not exists profiles (
+-- Profiles are readable by their owner, but role changes are server-controlled.
+create table if not exists public.profiles (
   id    uuid primary key references auth.users(id) on delete cascade,
   role  text not null default 'viewer'
 );
-alter table profiles enable row level security;
+alter table public.profiles enable row level security;
 
--- FIXED: Replace single "for all" policy with explicit INSERT, UPDATE, SELECT, DELETE policies
--- This allows authenticated users to manage their own profile row.
-drop policy if exists "own profile" on profiles;
-drop policy if exists "own profile insert" on profiles;
-drop policy if exists "own profile update" on profiles;
-drop policy if exists "own profile select" on profiles;
-drop policy if exists "own profile delete" on profiles;
+-- Remove client-side role mutation paths, including policies from older schema versions.
+drop policy if exists "own profile" on public.profiles;
+drop policy if exists "own profile insert" on public.profiles;
+drop policy if exists "own profile update" on public.profiles;
+drop policy if exists "own profile select" on public.profiles;
+drop policy if exists "own profile delete" on public.profiles;
+create policy "own profile select" on public.profiles for select using (auth.uid() = id);
+revoke all on public.profiles from public, anon, authenticated;
+grant select on public.profiles to authenticated;
 
-create policy "own profile insert" on profiles for insert with check (auth.uid() = id);
-create policy "own profile update" on profiles for update using (auth.uid() = id);
-create policy "own profile select" on profiles for select using (auth.uid() = id);
-create policy "own profile delete" on profiles for delete using (auth.uid() = id);
-
--- Auto-create profile row when a new user signs up
+-- New accounts start as viewers. Assign an owner role only through a trusted admin operation.
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
-security definer set search_path = public
+security definer
+set search_path = ''
 as $$
 begin
   insert into public.profiles (id, role)
-  values (new.id, 'owner')
+  values (new.id, 'viewer')
   on conflict (id) do nothing;
   return new;
 end;
@@ -161,10 +159,6 @@ create policy "auth read" on storage.objects for select using (
   bucket_id = 'diary-photos' and auth.uid() is not null
 );
 
--- ============================================================
--- ONE-TIME MIGRATION: upgrade existing viewer profiles to owner
--- Run this ONCE after deploying the schema fix.
--- If any users were created before this schema update, they will have role='viewer'.
--- This migration upgrades all viewer profiles to owner.
--- ============================================================
--- UPDATE public.profiles SET role = 'owner' WHERE role = 'viewer';
+-- To grant diary editing access, update exactly one trusted account from an admin
+-- context after confirming its auth user ID; never promote every viewer at once.
+-- UPDATE public.profiles SET role = 'owner' WHERE id = '<confirmed-auth-user-uuid>';

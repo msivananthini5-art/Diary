@@ -1228,6 +1228,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
     padding: 0.8rem;
   }
 
+}
+
 /* ── Memory stickers ── */
 .memory-sticker {
   position: absolute;
@@ -1780,6 +1782,153 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
   0%   { transform: rotateY(0deg); opacity: 1; }
   100% { transform: rotateY(-180deg); opacity: 0; }
 }
+/* A shared walnut desk and book-like details carry the cover mood into the diary. */
+.table-bg {
+  background:
+    linear-gradient(180deg, rgba(28, 13, 10, 0.36), rgba(18, 7, 9, 0.5)),
+    url("assets/images/walnut-desk.png") center / cover no-repeat,
+    #1a0810;
+}
+
+.book {
+  border-radius: 12px 18px 18px 12px;
+  filter: drop-shadow(0 22px 32px rgba(0,0,0,0.5)) drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+}
+
+.book-base {
+  background: linear-gradient(to right, #3b1d28 0%, #f8efdf 5%, #f6ead5 48%, #f1e4ce 52%, #f3e7d6 95%, #3b1d28 100%);
+  box-shadow: inset -2px 0 10px rgba(0,0,0,0.24), inset 2px 0 10px rgba(0,0,0,0.24);
+}
+
+.page-left,
+.page-right {
+  clip-path: none !important;
+  border-radius: 6px;
+  background:
+    radial-gradient(ellipse 60% 35% at 22% 15%, rgba(255,252,239,0.72), transparent 68%),
+    radial-gradient(ellipse 42% 42% at 88% 88%, rgba(180,139,87,0.12), transparent 70%),
+    repeating-linear-gradient(168deg, transparent 0 31px, rgba(154,118,75,0.018) 31px 32px),
+    linear-gradient(175deg, #fff9eb 0%, #f8efd9 38%, #f1e3ca 100%);
+  box-shadow:
+    inset 0 0 30px rgba(130,90,45,0.08),
+    inset 0 4px 10px rgba(100,65,25,0.045),
+    inset 0 -4px 10px rgba(100,65,25,0.045);
+  filter: drop-shadow(0 5px 10px rgba(28,16,9,0.13));
+}
+
+.page-left::after,
+.page-right::after {
+  background: repeating-linear-gradient(to bottom, transparent 0 27px, rgba(137,103,65,0.07) 27px 27.6px, transparent 27.6px 28px);
+}
+
+.login-paper {
+  background:
+    linear-gradient(90deg, transparent 27px, rgba(164,91,83,0.22) 27px 28px, transparent 28px),
+    radial-gradient(ellipse 55% 35% at 22% 18%, rgba(255,252,239,0.68), transparent 68%),
+    repeating-linear-gradient(to bottom, transparent 0 27px, rgba(137,103,65,0.07) 27px 27.6px, transparent 27.6px 28px),
+    linear-gradient(175deg, #fff9eb 0%, #f8efd9 38%, #f1e3ca 100%);
+}
+
+.login-content {
+  gap: 0.8rem;
+  padding: 5% 7%;
+}
+
+.login-heading-area { margin-bottom: 0.4rem; }
+.login-heading { color: #3a2922; text-shadow: 0 1px rgba(255,255,255,0.5); }
+.login-subheading { color: #85634a; }
+.login-sticker-container { padding: 0.65rem 0.5rem; margin-bottom: 0.75rem; }
+.login-sticker-wrapper { transform: rotate(-1.4deg); }
+.login-sticker-img {
+  clip-path: none;
+  width: min(100%, 200px) !important;
+  max-width: 200px !important;
+  height: auto !important;
+  padding: 5px;
+  border: 1px solid rgba(95,68,46,0.2);
+  border-radius: 2px;
+  background: #fbf5e8;
+}
+.login-sticker-wrapper::before { display: none; }
+.deco-flower, .deco-heart, .deco-sparkle { animation: none; }
+
+.login-input {
+  color: #49342a;
+  border-bottom-color: rgba(112,76,53,0.74);
+}
+.login-input:focus { border-bottom-color: #8f5260; }
+.login-password-toggle { color: #78583e; }
+
+.login-submit-torn {
+  clip-path: none !important;
+  border: 1px solid rgba(139,98,60,0.4);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #fbf2df, #ead8b9);
+  color: #4c3427;
+  box-shadow: 0 4px 9px rgba(79,49,25,0.16), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.login-submit-torn:hover { background: linear-gradient(180deg, #fff7e8, #efe0c6); }
+
+.mode-indicator {
+  background: rgba(61,35,31,0.72);
+  border: 1px solid rgba(233,202,158,0.28);
+  color: #f4e6d0;
+  backdrop-filter: blur(6px);
+}
+
+.controls .btn {
+  border: 1px solid rgba(225,190,141,0.38);
+  background: linear-gradient(145deg, #5b2938, #371924);
+  color: #f4dfc0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.controls .page-counter {
+  background: rgba(246,235,215,0.94);
+  border: 1px solid rgba(139,98,60,0.34);
+  color: #654435;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.16);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #a86b50;
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px), (max-aspect-ratio: 1/1) {
+  .book {
+    width: min(420px, calc(100vw - 48px));
+    max-width: none;
+    height: min(70dvh, 520px);
+    max-height: none;
+    filter: drop-shadow(0 18px 24px rgba(0,0,0,0.42));
+  }
+
+  .page-left {
+    border-radius: 8px 5px 5px 8px;
+    padding: 5% 6%;
+  }
+
+  .login-paper { min-height: 0; }
+  .login-content { padding: 20px 18px; gap: 0.65rem; }
+  .login-heading-area { margin-bottom: 0.25rem; }
+  .login-sticker-container { padding: 0.3rem; margin-bottom: 0.35rem; }
+  .login-sticker-wrapper { width: min(148px, 68vw) !important; }
+  .login-form { gap: 0.55rem; }
+  .login-field { gap: 0.45rem; }
+  .login-label { min-width: 58px; }
+  .login-input { min-width: 0; }
+  .controls { bottom: max(12px, env(safe-area-inset-bottom)); right: max(12px, env(safe-area-inset-right)); }
+  .mode-indicator { top: max(12px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); }
+}
+
+@media (max-width: 340px) {
+  .book { width: calc(100vw - 44px); height: min(70dvh, 420px); }
+  .login-content { padding: 18px 16px; }
+  .login-sticker-wrapper { width: min(136px, 64vw) !important; }
+  .login-form { gap: 0.45rem; }
+}
 </style>
 </head>
 <body>
@@ -1798,8 +1947,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
   <div class="controls">
     <span class="page-counter"><span id="spread-num">1</span> / <span id="spread-total">1</span></span>
     <button class="btn btn-edit" id="btn-add">✨ Add</button>
-    <button class="btn" id="btn-logout" title="Logout">🚪</button>
-    <a class="btn" href="index.html">🏠</a>
+    <button class="btn" id="btn-logout" type="button" title="Logout" aria-label="Log out">🚪</button>
+    <a class="btn" href="index.html" aria-label="Return to the cover" title="Return to the cover">🏠</a>
   </div>
 </div>
 
@@ -1849,7 +1998,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
 
 <script src="js/storage.js"></script>
 <script>
-let DIARY_MODE = 'editor';
+let DIARY_MODE = 'viewer';
 let isAnimating = false;
 let isLoggedIn = false; // Gate: prevent renderSpread() until login succeeds
 
@@ -1899,12 +2048,14 @@ function updateUIVisibility() {
   const actions = document.querySelectorAll('.memory-actions');
   
   if (DIARY_MODE === 'viewer') {
-    addBtn.classList.add('hidden');
+    if (addBtn) addBtn.classList.add('hidden');
     actions.forEach(a => a.style.display = 'none');
-  } else {
+  } else if (addBtn) {
     addBtn.classList.remove('hidden');
   }
 }
+
+setDiaryMode('viewer');
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('mode') === 'viewer') {
@@ -2149,6 +2300,7 @@ async function initDiaryAfterLogin() {
   } else {
     // No Supabase configured — show diary in local-only mode
     console.log('Supabase not configured — running in local-only mode');
+    setDiaryMode('editor');
     isLoggedIn = true; // Allow renderSpread() in local-only mode
     if (typeof renderSpread === 'function') renderSpread();
   }
@@ -3313,7 +3465,7 @@ function showLoginSpread() {
             ${girlsIllustration}
             <span class="login-subheading">open your memories</span>
           </div>
-          <form class="login-form" id="login-form" onsubmit="return false;">
+          <form class="login-form" id="login-form">
             <div class="login-field">
               <label class="login-label" for="login-email">email</label>
               <input type="email" id="login-email" class="login-input" autocomplete="email" />
@@ -3339,7 +3491,7 @@ function showLoginSpread() {
             ${girlsIllustration}
             <span class="login-subheading">open your memories</span>
           </div>
-          <form class="login-form" id="login-form" onsubmit="return false;">
+          <form class="login-form" id="login-form">
             <div class="login-field">
               <label class="login-label" for="login-email">email</label>
               <input type="email" id="login-email" class="login-input" autocomplete="email" />
@@ -3393,8 +3545,11 @@ function showLoginSpread() {
     // Initial check
     checkFieldsFilled();
     
-    loginBtn.addEventListener('click', handleLogin);
-    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      handleLogin();
+    });
     
     // Password toggle
     const toggleBtn = document.getElementById('login-password-toggle');
@@ -3410,11 +3565,17 @@ function showLoginSpread() {
       }
     });
     
-    emailInput.addEventListener('keydown', e => { 
-      if(e.key==='Enter') passwordInput.focus(); 
+    emailInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.isComposing && event.keyCode !== 229) {
+        event.preventDefault();
+        passwordInput.focus();
+      }
     });
-    passwordInput.addEventListener('keydown', e => { 
-      if(e.key==='Enter' && !loginBtn.classList.contains('login-btn-hidden')) handleLogin(); 
+    passwordInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.isComposing && event.keyCode !== 229 && !loginBtn.disabled) {
+        event.preventDefault();
+        loginForm.requestSubmit();
+      }
     });
     console.log('Login event listeners attached successfully');
   } catch (e) {
