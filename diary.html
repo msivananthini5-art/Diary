@@ -1798,8 +1798,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
   <div class="controls">
     <span class="page-counter"><span id="spread-num">1</span> / <span id="spread-total">1</span></span>
     <button class="btn btn-edit" id="btn-add">✨ Add</button>
-    <button class="btn" id="btn-logout" title="Logout">🚪</button>
-    <a class="btn" href="index.html">🏠</a>
+    <button class="btn" id="btn-logout" type="button" title="Logout" aria-label="Log out">🚪</button>
+    <a class="btn" href="index.html" aria-label="Return to the cover" title="Return to the cover">🏠</a>
   </div>
 </div>
 
@@ -1849,7 +1849,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#1a0810;font-family:
 
 <script src="js/storage.js"></script>
 <script>
-let DIARY_MODE = 'editor';
+let DIARY_MODE = 'viewer';
 let isAnimating = false;
 let isLoggedIn = false; // Gate: prevent renderSpread() until login succeeds
 
@@ -1899,12 +1899,14 @@ function updateUIVisibility() {
   const actions = document.querySelectorAll('.memory-actions');
   
   if (DIARY_MODE === 'viewer') {
-    addBtn.classList.add('hidden');
+    if (addBtn) addBtn.classList.add('hidden');
     actions.forEach(a => a.style.display = 'none');
-  } else {
+  } else if (addBtn) {
     addBtn.classList.remove('hidden');
   }
 }
+
+setDiaryMode('viewer');
 
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('mode') === 'viewer') {
@@ -2149,6 +2151,7 @@ async function initDiaryAfterLogin() {
   } else {
     // No Supabase configured — show diary in local-only mode
     console.log('Supabase not configured — running in local-only mode');
+    setDiaryMode('editor');
     isLoggedIn = true; // Allow renderSpread() in local-only mode
     if (typeof renderSpread === 'function') renderSpread();
   }
@@ -3313,7 +3316,7 @@ function showLoginSpread() {
             ${girlsIllustration}
             <span class="login-subheading">open your memories</span>
           </div>
-          <form class="login-form" id="login-form" onsubmit="return false;">
+          <form class="login-form" id="login-form">
             <div class="login-field">
               <label class="login-label" for="login-email">email</label>
               <input type="email" id="login-email" class="login-input" autocomplete="email" />
@@ -3339,7 +3342,7 @@ function showLoginSpread() {
             ${girlsIllustration}
             <span class="login-subheading">open your memories</span>
           </div>
-          <form class="login-form" id="login-form" onsubmit="return false;">
+          <form class="login-form" id="login-form">
             <div class="login-field">
               <label class="login-label" for="login-email">email</label>
               <input type="email" id="login-email" class="login-input" autocomplete="email" />
@@ -3393,8 +3396,11 @@ function showLoginSpread() {
     // Initial check
     checkFieldsFilled();
     
-    loginBtn.addEventListener('click', handleLogin);
-    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      handleLogin();
+    });
     
     // Password toggle
     const toggleBtn = document.getElementById('login-password-toggle');
@@ -3410,11 +3416,17 @@ function showLoginSpread() {
       }
     });
     
-    emailInput.addEventListener('keydown', e => { 
-      if(e.key==='Enter') passwordInput.focus(); 
+    emailInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.isComposing && event.keyCode !== 229) {
+        event.preventDefault();
+        passwordInput.focus();
+      }
     });
-    passwordInput.addEventListener('keydown', e => { 
-      if(e.key==='Enter' && !loginBtn.classList.contains('login-btn-hidden')) handleLogin(); 
+    passwordInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.isComposing && event.keyCode !== 229 && !loginBtn.disabled) {
+        event.preventDefault();
+        loginForm.requestSubmit();
+      }
     });
     console.log('Login event listeners attached successfully');
   } catch (e) {

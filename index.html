@@ -368,6 +368,22 @@
   }
   .open-btn:hover::before { opacity: 1; }
   .open-btn:focus { outline: none; }
+  .open-btn:focus-visible,
+  .book:focus-visible {
+    outline: 2px solid rgba(245, 205, 170, 0.95);
+    outline-offset: 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .petal { display: none; }
+  }
 
   .open-btn__text {
     font-family: 'Cormorant Garamond', serif;
@@ -585,6 +601,11 @@ function openDiary() {
   if (opened) return;
   opened = true;
 
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.location.href = 'diary.html';
+    return;
+  }
+
   document.getElementById('scene').classList.add('is-opening');
 
   setTimeout(() => {
@@ -596,12 +617,16 @@ function openDiary() {
   }, 1400);
 }
 
-document.getElementById('book').addEventListener('click', openDiary);
-document.getElementById('openBtn').addEventListener('click', openDiary);
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') openDiary();
+const book = document.getElementById('book');
+book.addEventListener('click', openDiary);
+book.addEventListener('keydown', (event) => {
+  if (event.isComposing || event.keyCode === 229) return;
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    openDiary();
+  }
 });
+document.getElementById('openBtn').addEventListener('click', openDiary);
 
 window.addEventListener('pageshow', e => {
   if (e.persisted) {

@@ -52,47 +52,22 @@ const SupabaseSync = (() => {
   async function getRole() {
     if (_role) return _role;
     const { data: { user } } = await _supabaseClient.auth.getUser();
-    if (!user) return null;
-    const { data, error } = await _supabaseClient.from('profiles').select('role').eq('id', user.id).maybeSingle();
-    
+    if (!user) return 'viewer';
+
+    const { data, error } = await _supabaseClient
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+
     if (error) {
       console.warn('getRole query error:', error);
-      console.warn('getRole full error:', error);
-      return null;
+      _role = 'viewer';
+      return _role;
     }
-    
-    // If no profile row exists yet, we need to create one
-    if (!data) {
-      try {
-        const { data: newProfile, error: insertErr } = await _supabaseClient.from('profiles')
-          .insert({ id: user.id, role: 'owner' })
-          .select('role')
-          .maybeSingle();
-        if (insertErr) {
-          console.warn('getRole insert error:', insertErr);
-          console.warn('getRole insert full error:', insertErr);
-          return 'owner'; // Assume owner; fallback
-        }
-        _role = newProfile?.role || 'owner';
-        return _role;
-      } catch (e) {
-        console.warn('getRole insert exception:', e);
-        return 'owner'; // Fallback
-      }
-    }
-    
-    _role = data?.role || 'viewer';
-    
-    // Auto-promote: if profile is viewer (old default), upgrade to owner
-    if (_role === 'viewer') {
-      try {
-        await _supabaseClient.from('profiles').upsert({ id: user.id, role: 'owner' });
-        _role = 'owner';
-      } catch (e) {
-        console.warn('getRole auto-promote error:', e);
-      }
-    }
-    
+
+    // Missing or unreadable profiles must never grant editor access.
+    _role = data?.role === 'owner' ? 'owner' : 'viewer';
     return _role;
   }
 
@@ -101,16 +76,23 @@ const SupabaseSync = (() => {
      Sets DIARY_MODE and re-renders when auth changes.
   ───────────────────────────────────────────────────────── */
   if (_supabaseClient) {
-    _supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
-        _role = null; // reset cached role
-        const role = await getRole();
-        // DIARY_MODE is a global in diary.html
-        window.DIARY_MODE = role === 'owner' ? 'editor' : 'viewer';
-        if (typeof renderSpread === 'function') renderSpread();
-      } else {
-        window.DIARY_MODE = 'viewer';
+    _supabaseClient.auth.onAuthStateChange((event, session) => {
+      _role = null;
+      if (!session) {
+        if (typeof setDiaryMode === 'function') setDiaryMode('viewer');
+        return;
       }
+
+      // Defer Supabase reads until the auth callback releases its internal lock.
+      setTimeout(async () => {
+        const role = await getRole();
+        const activeSession = await getSession();
+        if (!activeSession || activeSession.user.id !== session.user.id) return;
+        if (typeof setDiaryMode === 'function') {
+          setDiaryMode(role === 'owner' ? 'editor' : 'viewer');
+        }
+        if (typeof renderSpread === 'function') renderSpread();
+      }, 0);
     });
   }
 
