@@ -458,6 +458,79 @@
     .book { width: 68vw; }
     .page-title__main { font-size: 2.4rem; }
   }
+  /* Tactile cover treatment: keep the landing screen feeling like the first page of the same book. */
+  .bg {
+    background:
+      linear-gradient(180deg, rgba(30, 12, 9, 0.38), rgba(19, 7, 9, 0.48)),
+      url("assets/images/walnut-desk.png") center / cover no-repeat,
+      #21100d;
+  }
+
+  .book {
+    filter:
+      drop-shadow(0 24px 24px rgba(0, 0, 0, 0.46))
+      drop-shadow(0 5px 9px rgba(0, 0, 0, 0.38));
+  }
+
+  .book-cover {
+    background:
+      radial-gradient(ellipse 75% 60% at 70% 16%, rgba(255, 215, 184, 0.14), transparent 70%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 6px),
+      repeating-linear-gradient(-45deg, rgba(0,0,0,0.035) 0 1px, transparent 1px 6px),
+      linear-gradient(145deg, #70354a 0%, #512438 48%, #3e192b 100%);
+    box-shadow:
+      7px 0 0 #351521,
+      10px 4px 22px rgba(0,0,0,0.58),
+      inset -3px 0 8px rgba(0,0,0,0.3),
+      inset 2px 0 8px rgba(255,210,180,0.1);
+  }
+
+  .book-cover::before {
+    background:
+      radial-gradient(ellipse 70% 60% at 65% 20%, rgba(255, 224, 196, 0.13), transparent 65%),
+      linear-gradient(110deg, rgba(255,255,255,0.04), transparent 38%, rgba(0,0,0,0.12));
+  }
+
+  .book-cover::after {
+    inset: 5.2%;
+    border: 1px solid rgba(230, 195, 150, 0.38);
+    outline: 1px dashed rgba(230, 195, 150, 0.2);
+    outline-offset: -6px;
+  }
+
+  .book-spine {
+    width: 11%;
+    background: linear-gradient(90deg, #2a101b 0%, #442030 62%, transparent 100%);
+    box-shadow: inset -3px 0 5px rgba(0,0,0,0.3);
+  }
+
+  .cover-title {
+    color: #ead5a9;
+    text-shadow: 0 1px 0 rgba(255,245,214,0.28), 0 2px 4px rgba(0,0,0,0.58);
+  }
+
+  .open-btn {
+    background: linear-gradient(180deg, rgba(243, 225, 192, 0.14), rgba(117, 67, 49, 0.12));
+    border-color: rgba(218, 178, 130, 0.52);
+    border-radius: 3px;
+    box-shadow: inset 0 1px 0 rgba(255,240,210,0.1), 0 5px 14px rgba(0,0,0,0.16);
+    animation: none;
+  }
+
+  .open-btn__text { color: #eadcc5; }
+  .open-btn__heart { animation: none; }
+
+  @media (max-width: 500px) {
+    .book { width: min(228px, 76vw); }
+    .page-title { margin-bottom: clamp(14px, 2.5vh, 22px); }
+    .open-wrap { margin-top: clamp(16px, 3vh, 24px); }
+  }
+
+  @media (max-height: 650px) and (max-width: 500px) {
+    .book { width: min(210px, 70vw); }
+    .page-title { margin-bottom: 12px; }
+    .open-wrap { margin-top: 14px; }
+  }
   </style>
 </head>
 <body>
